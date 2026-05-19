@@ -9,9 +9,15 @@ class DoctorAppointmentsView extends GetView<DoctorPortalController> {
 
   @override
   Widget build(BuildContext context) {
-    return const Column(
-      children: [SearchAndFilterSection(), Expanded(child: AppointmentsList())],
+    return RefreshIndicator(
+      onRefresh: () => controller.fetchAppointments(),
+      color: const Color(0xFF009689),
+      child: Column(
+        children: const [
+          SearchAndFilterSection(),
+          Expanded(child: AppointmentsList()),
+        ],
+      ),
     );
   }
 }
-

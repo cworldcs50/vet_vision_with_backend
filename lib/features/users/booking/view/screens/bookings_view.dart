@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/classes/adaptive_layout.dart';
 import '../../../../../core/network/request_status.dart';
+import '../../../../../core/widgets/users_liquid_pull_to_refresh.dart';
 import '../../controller/bookings_controller.dart';
 
 class BookingsView extends StatelessWidget {
@@ -134,56 +135,82 @@ class BookingsView extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: controller.requestStatus.value == RequestStatus.loading
-                    ? const Center(child: CircularProgressIndicator())
-                    : items.isEmpty
-                    ? const Center(child: Text("No appointments found"))
-                    : ListView.separated(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: AdaptiveLayout.getResponsiveFontSize(
-                            context,
-                            fontSize: 16,
-                          ),
-                          vertical: AdaptiveLayout.getResponsiveFontSize(
-                            context,
-                            fontSize: 16,
-                          ),
-                        ),
-                        itemCount: items.length,
-                        separatorBuilder: (context, index) => SizedBox(
-                          height: AdaptiveLayout.getResponsiveFontSize(
-                            context,
-                            fontSize: 12,
-                          ),
-                        ),
-                        itemBuilder: (context, index) {
-                          final item = items[index];
-                          final doctorName = item.doctor?.name ?? "Doctor";
-                          final specialization =
-                              item.doctor?.specialization ?? "Veterinarian";
-                          return Card(
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor: AppColors.primaryColor
-                                    .withValues(alpha: 0.15),
-                                child: const Icon(Icons.pets),
-                              ),
-                              title: Text(doctorName),
-                              subtitle: Text(
-                                "$specialization\n${item.dateTime}",
-                              ),
-                              trailing: Text(
-                                item.status,
-                                style: const TextStyle(
-                                  color: AppColors.primaryColor,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              isThreeLine: true,
+                child: UsersLiquidPullToRefresh(
+                  onRefresh: controller.loadAppointments,
+                  child: controller.requestStatus.value == RequestStatus.loading
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          children: const [
+                            SizedBox(height: 120),
+                            Center(child: CircularProgressIndicator()),
+                          ],
+                        )
+                      : items.isEmpty
+                      ? ListView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 16,
                             ),
-                          );
-                        },
-                      ),
+                            vertical: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 16,
+                            ),
+                          ),
+                          children: const [
+                            SizedBox(height: 120),
+                            Center(child: Text('No appointments found')),
+                          ],
+                        )
+                      : ListView.separated(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 16,
+                            ),
+                            vertical: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 16,
+                            ),
+                          ),
+                          itemCount: items.length,
+                          separatorBuilder: (context, index) => SizedBox(
+                            height: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 12,
+                            ),
+                          ),
+                          itemBuilder: (context, index) {
+                            final item = items[index];
+                            final doctorName = item.doctor?.name ?? 'Doctor';
+                            final specialization =
+                                item.doctor?.specialization ?? 'Veterinarian';
+                            return Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: AppColors.primaryColor
+                                      .withValues(alpha: 0.15),
+                                  child: const Icon(Icons.pets),
+                                ),
+                                title: Text(doctorName),
+                                subtitle: Text(
+                                  '$specialization\n${item.dateTime}',
+                                ),
+                                trailing: Text(
+                                  item.status,
+                                  style: const TextStyle(
+                                    color: AppColors.primaryColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                isThreeLine: true,
+                              ),
+                            );
+                          },
+                        ),
+                ),
               ),
             ],
           );

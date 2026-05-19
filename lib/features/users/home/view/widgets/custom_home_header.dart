@@ -2,10 +2,26 @@ import 'package:flutter/material.dart';
 import '../../../../../core/classes/adaptive_layout.dart';
 
 class CustomHomeHeader extends StatelessWidget {
-  const CustomHomeHeader({super.key});
+  const CustomHomeHeader({super.key, this.userDisplayName});
+
+  final String? userDisplayName;
+
+  String _timeGreeting() {
+    final h = DateTime.now().hour;
+    if (h < 12) return 'Good morning';
+    if (h < 17) return 'Good afternoon';
+    return 'Good evening';
+  }
 
   @override
   Widget build(BuildContext context) {
+    final greeting = _timeGreeting();
+    final trimmed = userDisplayName?.split(" ");
+
+    final line1 = (trimmed != null && trimmed.isNotEmpty)
+        ? '$greeting, ${trimmed.first} ${trimmed.last} ☀️'
+        : '$greeting ☀️';
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -14,13 +30,14 @@ class CustomHomeHeader extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Good morning ☀️",
+              line1,
               style: TextStyle(
                 color: Colors.white70,
                 fontSize: AdaptiveLayout.getResponsiveFontSize(
                   context,
                   fontSize: 13,
                 ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             SizedBox(
@@ -30,7 +47,7 @@ class CustomHomeHeader extends StatelessWidget {
               ),
             ),
             Text(
-              "Find Your Vet",
+              'Find Your Vet',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: AdaptiveLayout.getResponsiveFontSize(
@@ -44,6 +61,7 @@ class CustomHomeHeader extends StatelessWidget {
         ),
         Row(
           children: [
+            
             Container(
               padding: EdgeInsets.all(
                 AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8),

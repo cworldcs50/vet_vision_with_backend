@@ -7,7 +7,7 @@ class RoleSelectionController extends GetxController {
   void selectRole(bool isDoctor) {
     final selectedRole = isDoctor ? AuthRole.doctor : AuthRole.user;
     Get.toNamed(
-      AuthModuleRouter.signInRoute(selectedRole),
+      AuthModuleRouter.homeRoute(selectedRole),
       arguments: {'role': selectedRole.value},
     );
   }

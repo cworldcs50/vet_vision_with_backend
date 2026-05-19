@@ -7,18 +7,18 @@ class SignInWithGoogle {
   final Crud crud;
 
   Future<dynamic> call({
+    required String name,
+    required String email,
     required String provider,
     required String providerId,
-    required String email,
-    required String name,
     String? avatar,
   }) async {
     final result = await crud.post(AppLink.socialLogin, {
-      "provider": provider,
-      "provider_id": providerId,
-      "email": email,
       "name": name,
-      "avatar": ?avatar,
+      "email": email,
+      "provider": provider,
+      "avatar": avatar ?? "",
+      "provider_id": providerId,
     });
 
     return result;

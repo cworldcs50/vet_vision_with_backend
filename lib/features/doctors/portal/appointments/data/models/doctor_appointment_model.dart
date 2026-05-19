@@ -42,14 +42,14 @@ class DoctorAppointmentModel {
 
   factory DoctorAppointmentModel.fromMap(Map<String, dynamic> map) {
     return DoctorAppointmentModel(
-      id: map['id'] ?? '',
-      patientName: map['patientName'] ?? '',
-      petName: map['petName'] ?? '',
-      petType: map['petType'] ?? '',
-      date: DateTime.parse(map['date']),
-      time: map['time'] ?? '',
-      isOnline: map['isOnline'] ?? false,
-      isPaid: map['isPaid'] ?? false,
+      id: map['id']?.toString() ?? '',
+      patientName: map['client']?['name'] ?? map['patientName'] ?? '',
+      petName: map['animal']?['name'] ?? map['petName'] ?? '',
+      petType: map['animal']?['species'] ?? map['petType'] ?? '',
+      date: map['date_time'] != null ? DateTime.parse(map['date_time']) : (map['date'] != null ? DateTime.parse(map['date']) : DateTime.now()),
+      time: map['date_time'] != null ? map['date_time'].toString().split(' ').last : (map['time'] ?? ''),
+      isOnline: map['type'] == 'online' || (map['isOnline'] ?? false),
+      isPaid: map['isPaid'] ?? true, // Most appointments from doctor view are assumed paid or pending
       status: map['status'] ?? 'upcoming',
       notes: map['notes'] ?? '',
     );

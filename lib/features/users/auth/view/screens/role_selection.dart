@@ -1,11 +1,9 @@
-
-
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/classes/adaptive_layout.dart';
 import '../../../../../core/constants/images_constants.dart';
+import '../../../../../core/theme/app_colors.dart';
 import '../../controller/role_selection_controller.dart';
 import '../widgets/responsive_and_adaptive_role_selection/desktop_role_selection_layout.dart';
 import '../widgets/responsive_and_adaptive_role_selection/mobile_role_selection_layout.dart';
@@ -21,7 +19,7 @@ class RoleSelection extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: const Color(0xFF009689),
+      backgroundColor: AppColors.accent,
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

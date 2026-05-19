@@ -5,6 +5,17 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/classes/adaptive_layout.dart';
 import '../../../../../core/classes/search_criteria.dart';
 
+String _homeSearchNarrowChipLabel(SearchCriteria criteria) {
+  switch (criteria) {
+    case SearchCriteria.name:
+      return 'Doctor name only';
+    case SearchCriteria.specialization:
+      return 'Specialization only';
+    default:
+      return '';
+  }
+}
+
 class CustomSearchBar extends StatelessWidget {
   const CustomSearchBar({
     super.key,
@@ -41,7 +52,7 @@ class CustomSearchBar extends StatelessWidget {
               textAlign: TextAlign.left,
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
-                hintText: "Search by name, specialization...",
+                hintText: 'Search by name, specialization...',
                 hintStyle: TextStyle(
                   color: Colors.grey,
                   fontSize: AdaptiveLayout.getResponsiveFontSize(
@@ -91,39 +102,12 @@ class CustomSearchBar extends StatelessWidget {
             ),
           ),
         ),
-        // Container(
-        //   padding: EdgeInsets.all(
-        //     AdaptiveLayout.getResponsiveFontSize(context, fontSize: 6),
-        //   ),
-        //   decoration: BoxDecoration(
-        //     color: const Color(0xFF009689).withValues(alpha: 0.1),
-        //     borderRadius: BorderRadius.circular(
-        //       AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8),
-        //     ),
-        //   ),
-        //   child: IconButton(
-        //     onPressed: onFilterPressed,
-        //     style: IconButton.styleFrom(
-        //       backgroundColor: const Color(0xFF009689),
-        //       shape: RoundedRectangleBorder(
-        //         borderRadius: BorderRadius.circular(
-        //           AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
-        //         ),
-        //       ),
-        //     ),
-        //     icon: Icon(
-        //       Icons.tune,
-        //       color: Colors.white,
-        //       size: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 18),
-        //     ),
-        //   ),
-        // ),
       ],
     );
   }
 
   void _showAdvancedFilterSheet(BuildContext context) {
-    showModalBottomSheet(
+    showModalBottomSheet<void>(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.white,
@@ -134,16 +118,19 @@ class CustomSearchBar extends StatelessWidget {
           ),
         ),
       ),
-      builder: (context) {
+      builder: (sheetContext) {
         return GetBuilder<HomeController>(
           builder: (controller) {
             return Padding(
               padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
+                bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
               ),
               child: Container(
                 padding: EdgeInsets.all(
-                  AdaptiveLayout.getResponsiveFontSize(context, fontSize: 24),
+                  AdaptiveLayout.getResponsiveFontSize(
+                    sheetContext,
+                    fontSize: 24,
+                  ),
                 ),
                 child: SingleChildScrollView(
                   child: Column(
@@ -156,7 +143,7 @@ class CustomSearchBar extends StatelessWidget {
                           height: 5,
                           margin: EdgeInsets.only(
                             bottom: AdaptiveLayout.getResponsiveFontSize(
-                              context,
+                              sheetContext,
                               fontSize: 20,
                             ),
                           ),
@@ -164,7 +151,7 @@ class CustomSearchBar extends StatelessWidget {
                             color: Colors.grey.shade300,
                             borderRadius: BorderRadius.circular(
                               AdaptiveLayout.getResponsiveFontSize(
-                                context,
+                                sheetContext,
                                 fontSize: 10,
                               ),
                             ),
@@ -175,10 +162,10 @@ class CustomSearchBar extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            "Filters & Sorting",
+                            'Filters & Sorting',
                             style: TextStyle(
                               fontSize: AdaptiveLayout.getResponsiveFontSize(
-                                context,
+                                sheetContext,
                                 fontSize: 22,
                               ),
                               fontWeight: FontWeight.bold,
@@ -190,18 +177,50 @@ class CustomSearchBar extends StatelessWidget {
                               controller.minPriceController.clear();
                               controller.maxPriceController.clear();
                               controller.experienceController.clear();
-                              controller.selectedSortBy = "rating";
-                              controller.selectedSessionType = "both";
+                              controller.selectedSortBy = 'rating';
+                              controller.selectedSessionType = 'both';
+                              controller.activeSearchCriteria.clear();
                               controller.update();
                             },
-                            child: const Text("Reset All"),
+                            child: const Text('Reset All'),
                           ),
                         ],
                       ),
                       const Divider(),
-                      _buildSectionHeader(context, "Search In"),
+                      const HomeFilterSheetSectionHeader(
+                        title: 'Search text (main bar)',
+                      ),
+                      Text(
+                        'Typing in the search bar matches doctor name or specialization. '
+                        'You do not need to pick anything here unless you want to narrow '
+                        'to one field only.',
+                        style: TextStyle(
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(
+                            sheetContext,
+                            fontSize: 13,
+                          ),
+                          color: AppColors.textSecondary,
+                          height: 1.35,
+                        ),
+                      ),
+                      SizedBox(
+                        height: AdaptiveLayout.getResponsiveFontSize(
+                          sheetContext,
+                          fontSize: 12,
+                        ),
+                      ),
+                      const HomeFilterSheetSectionHeader(
+                        title: 'Optional: narrow search',
+                      ),
                       Wrap(
-                        spacing: 10,
+                        spacing: AdaptiveLayout.getResponsiveFontSize(
+                          sheetContext,
+                          fontSize: 10,
+                        ),
+                        runSpacing: AdaptiveLayout.getResponsiveFontSize(
+                          sheetContext,
+                          fontSize: 8,
+                        ),
                         children: SearchCriteria.values
                             .where(
                               (e) =>
@@ -212,7 +231,16 @@ class CustomSearchBar extends StatelessWidget {
                               final isSelected = controller.activeSearchCriteria
                                   .contains(criteria);
                               return FilterChip(
-                                label: Text(criteria.name.capitalizeFirst!),
+                                label: Text(
+                                  _homeSearchNarrowChipLabel(criteria),
+                                  style: TextStyle(
+                                    fontSize:
+                                        AdaptiveLayout.getResponsiveFontSize(
+                                          sheetContext,
+                                          fontSize: 13,
+                                        ),
+                                  ),
+                                ),
                                 selected: isSelected,
                                 onSelected: (_) =>
                                     controller.toggleSearchCriteria(criteria),
@@ -224,90 +252,128 @@ class CustomSearchBar extends StatelessWidget {
                             })
                             .toList(),
                       ),
-                      _buildSectionHeader(context, "Price Range"),
+                      const HomeFilterSheetSectionHeader(title: 'Price Range'),
                       Row(
                         children: [
                           Expanded(
-                            child: _buildTextField(
-                              context,
-                              controller.minPriceController,
-                              "Min Price",
-                              prefixText: "",
+                            child: HomeFilterSheetNumericTextField(
+                              controller: controller.minPriceController,
+                              hint: 'Min Price',
                             ),
                           ),
-                          const SizedBox(width: 15),
+                          SizedBox(
+                            width: AdaptiveLayout.getResponsiveFontSize(
+                              sheetContext,
+                              fontSize: 15,
+                            ),
+                          ),
                           Expanded(
-                            child: _buildTextField(
-                              context,
-                              controller.maxPriceController,
-                              "Max Price",
-                              prefixText: "",
+                            child: HomeFilterSheetNumericTextField(
+                              controller: controller.maxPriceController,
+                              hint: 'Max Price',
                             ),
                           ),
                         ],
                       ),
-                      _buildSectionHeader(
-                        context,
-                        "Minimum Experience (Years)",
+                      const HomeFilterSheetSectionHeader(
+                        title: 'Minimum Experience (Years)',
                       ),
-                      _buildTextField(
-                        context,
-                        controller.experienceController,
-                        "Years of experience",
+                      HomeFilterSheetNumericTextField(
+                        controller: controller.experienceController,
+                        hint: 'Years of experience',
                         icon: Icons.history_edu,
                       ),
-                      _buildSectionHeader(context, "Sort By"),
+                      const HomeFilterSheetSectionHeader(title: 'Sort By'),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: AdaptiveLayout.getResponsiveFontSize(
+                            sheetContext,
+                            fontSize: 12,
+                          ),
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(
+                            AdaptiveLayout.getResponsiveFontSize(
+                              sheetContext,
+                              fontSize: 12,
+                            ),
+                          ),
                         ),
                         child: DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: controller.selectedSortBy,
                             isExpanded: true,
-                            onChanged: (v) => controller.updateSortBy(v!),
+                            onChanged: (v) {
+                              if (v != null) controller.updateSortBy(v);
+                            },
                             items: const [
                               DropdownMenuItem(
-                                value: "rating",
-                                child: Text("Highest Rating First"),
+                                value: 'rating',
+                                child: Text('Highest Rating First'),
                               ),
                               DropdownMenuItem(
-                                value: "distance",
-                                child: Text("Closest Doctor First"),
+                                value: 'distance',
+                                child: Text('Closest Doctor First'),
                               ),
                               DropdownMenuItem(
-                                value: "rating_and_distance",
-                                child: Text("Best & Closest"),
+                                value: 'rating_and_distance',
+                                child: Text('Best & Closest'),
                               ),
                               DropdownMenuItem(
-                                value: "experience",
-                                child: Text("Most Experience First"),
+                                value: 'experience',
+                                child: Text('Most Experience First'),
                               ),
                               DropdownMenuItem(
-                                value: "price",
-                                child: Text("Cheapest Fee First"),
+                                value: 'price',
+                                child: Text('Cheapest Fee First'),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      _buildSectionHeader(context, "Session Type"),
+                      const HomeFilterSheetSectionHeader(title: 'Session Type'),
                       Row(
                         children: [
-                          _buildSessionChip(controller, "online", "Online"),
-                          const SizedBox(width: 10),
-                          _buildSessionChip(controller, "offline", "Offline"),
-                          const SizedBox(width: 10),
-                          _buildSessionChip(controller, "both", "Both"),
+                          HomeFilterSheetSessionChip(
+                            controller: controller,
+                            value: 'online',
+                            label: 'Online',
+                          ),
+                          SizedBox(
+                            width: AdaptiveLayout.getResponsiveFontSize(
+                              sheetContext,
+                              fontSize: 10,
+                            ),
+                          ),
+                          HomeFilterSheetSessionChip(
+                            controller: controller,
+                            value: 'offline',
+                            label: 'Offline',
+                          ),
+                          SizedBox(
+                            width: AdaptiveLayout.getResponsiveFontSize(
+                              sheetContext,
+                              fontSize: 10,
+                            ),
+                          ),
+                          HomeFilterSheetSessionChip(
+                            controller: controller,
+                            value: 'both',
+                            label: 'Both',
+                          ),
                         ],
                       ),
-                      const SizedBox(height: 35),
+                      SizedBox(
+                        height: AdaptiveLayout.getResponsiveFontSize(
+                          sheetContext,
+                          fontSize: 35,
+                        ),
+                      ),
                       ElevatedButton(
                         onPressed: () {
                           controller.applyAdvancedFilters();
-                          Navigator.pop(context);
+                          Navigator.pop(sheetContext);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,
@@ -318,10 +384,10 @@ class CustomSearchBar extends StatelessWidget {
                           elevation: 0,
                         ),
                         child: Text(
-                          "Apply Filters",
+                          'Apply Filters',
                           style: TextStyle(
                             fontSize: AdaptiveLayout.getResponsiveFontSize(
-                              context,
+                              sheetContext,
                               fontSize: 18,
                             ),
                             fontWeight: FontWeight.bold,
@@ -339,54 +405,100 @@ class CustomSearchBar extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildSectionHeader(BuildContext context, String title) {
+class HomeFilterSheetSectionHeader extends StatelessWidget {
+  const HomeFilterSheetSectionHeader({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 20, bottom: 10),
+      padding: EdgeInsets.only(
+        top: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
+        bottom: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 10),
+      ),
       child: Text(
         title,
         style: TextStyle(
-          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+          fontSize: AdaptiveLayout.getResponsiveFontSize(
+            context,
+            fontSize: 16,
+          ),
           fontWeight: FontWeight.bold,
           color: AppColors.primary,
         ),
       ),
     );
   }
+}
 
-  Widget _buildTextField(
-    BuildContext context,
-    TextEditingController controller,
-    String hint, {
-    String? prefixText,
-    IconData? icon,
-  }) {
+class HomeFilterSheetNumericTextField extends StatelessWidget {
+  const HomeFilterSheetNumericTextField({
+    super.key,
+    required this.controller,
+    required this.hint,
+    this.icon,
+  });
+
+  final TextEditingController controller;
+  final String hint;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
       decoration: InputDecoration(
         hintText: hint,
-        prefixText: prefixText,
-        prefixIcon: icon != null ? Icon(icon, size: 20) : null,
+        prefixIcon: icon != null
+            ? Icon(
+                icon,
+                size: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 20,
+                ),
+              )
+            : null,
         filled: true,
         fillColor: Colors.grey.shade100,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+          ),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 15,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AdaptiveLayout.getResponsiveFontSize(
+            context,
+            fontSize: 15,
+          ),
+          vertical: AdaptiveLayout.getResponsiveFontSize(
+            context,
+            fontSize: 15,
+          ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildSessionChip(
-    HomeController controller,
-    String value,
-    String label,
-  ) {
+class HomeFilterSheetSessionChip extends StatelessWidget {
+  const HomeFilterSheetSessionChip({
+    super.key,
+    required this.controller,
+    required this.value,
+    required this.label,
+  });
+
+  final HomeController controller;
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
     final isSelected = controller.selectedSessionType == value;
     return Expanded(
       child: ChoiceChip(
@@ -394,6 +506,10 @@ class CustomSearchBar extends StatelessWidget {
           child: Text(
             label,
             style: TextStyle(
+              fontSize: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 13,
+              ),
               color: isSelected ? Colors.white : Colors.black,
               fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),

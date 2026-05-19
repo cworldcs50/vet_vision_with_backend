@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/classes/adaptive_layout.dart';
+import '../../../core/theme/app_colors.dart';
 
 class CustomAuthButton extends StatelessWidget {
   const CustomAuthButton({
@@ -21,12 +22,19 @@ class CustomAuthButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: backgroundColor,
-        elevation: isOutlined ? 0 : 2,
-        side:
-            isOutlined ? const BorderSide(color: Colors.grey) : BorderSide.none,
+        backgroundColor: AppColors.accent,
+        padding: EdgeInsets.symmetric(
+          vertical: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 14),
+          horizontal: AdaptiveLayout.getResponsiveFontSize(
+            context,
+            fontSize: 12,
+          ),
+        ),
+        side: const BorderSide(color: AppColors.accent),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AdaptiveLayout.getResponsiveFontSize(context, fontSize: 14)),
+          borderRadius: BorderRadius.circular(
+            AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+          ),
         ),
       ),
       child: child,

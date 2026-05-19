@@ -15,7 +15,7 @@ class StepTitle extends StatelessWidget {
         Text(
           title,
           style: TextStyle(
-            color: Colors.black87,
+            color: Colors.white,
             fontSize: AdaptiveLayout.getResponsiveFontSize(
               context,
               fontSize: 18,
@@ -29,7 +29,7 @@ class StepTitle extends StatelessWidget {
         Text(
           subtitle,
           style: TextStyle(
-            color: Colors.black54,
+            color: Colors.white,
             fontSize: AdaptiveLayout.getResponsiveFontSize(
               context,
               fontSize: 12,
@@ -40,4 +40,3 @@ class StepTitle extends StatelessWidget {
     );
   }
 }
-

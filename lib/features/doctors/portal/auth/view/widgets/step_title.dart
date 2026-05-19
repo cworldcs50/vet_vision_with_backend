@@ -1,0 +1,43 @@
+import 'package:flutter/material.dart';
+import '../../../../../../core/classes/adaptive_layout.dart';
+
+class StepTitle extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  const StepTitle({required this.title, required this.subtitle, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 18,
+            ),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(
+          height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 4),
+        ),
+        Text(
+          subtitle,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

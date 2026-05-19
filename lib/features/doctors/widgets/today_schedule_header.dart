@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/classes/adaptive_layout.dart';
 import '../doctor_portal_controller.dart';
 
-class TodayScheduleHeader extends StatelessWidget {
+class TodayScheduleHeader extends GetView<DoctorPortalController> {
   const TodayScheduleHeader({super.key});
 
   @override
@@ -22,18 +22,19 @@ class TodayScheduleHeader extends StatelessWidget {
             color: Colors.black87,
           ),
         ),
-        TextButton(
-          onPressed:
-              () => Get.find<DoctorPortalController>().selectedIndex.value = 1,
-          child: Text(
-            "7 appointments",
-            style: TextStyle(
-              fontSize: AdaptiveLayout.getResponsiveFontSize(
-                context,
-                fontSize: 12,
+        Obx(
+          () => TextButton(
+            onPressed: () => controller.selectedIndex.value = 1,
+            child: Text(
+              "${controller.todayAppointmentsCount.value} appointments",
+              style: TextStyle(
+                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 12,
+                ),
+                color: const Color(0xFF009689),
+                decoration: TextDecoration.underline,
               ),
-              color: const Color(0xFF009689),
-              decoration: TextDecoration.underline,
             ),
           ),
         ),

@@ -50,7 +50,7 @@ class StatsGrid extends GetView<DoctorPortalController> {
         Obx(
           () => StatCardDoctor(
             title: "Growth",
-            value: "+${controller.growthPercentage.value}%",
+            value: controller.growthPercentage.value,
             icon: Icons.trending_up,
             iconColor: Colors.purple,
           ),

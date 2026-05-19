@@ -1,20 +1,19 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../../core/classes/base_request_controller.dart';
+import 'package:flutter/material.dart';
+import '../data/models/user_model.dart';
+import '../../../../modules/auth/auth_role.dart';
 import '../../../../core/classes/validators.dart';
-import '../../../../core/constants/caching_keys_constants.dart';
+import '../../../../core/services/app_service.dart';
 import '../../../../core/network/request_status.dart';
 import '../../../../core/routes/app_routes_name.dart';
-import '../../../../core/services/app_service.dart';
-import '../../../../core/services/authentication_service.dart';
 import '../../../../modules/auth/auth_module_router.dart';
-import '../../../../modules/auth/auth_role.dart';
-import '../data/models/user_model.dart';
+import '../../../../core/classes/base_request_controller.dart';
+import '../../../../core/constants/caching_keys_constants.dart';
+import '../../../../core/services/authentication_service.dart';
 
 class SignUpController extends BaseRequestController {
-  void retry() => setStatus(RequestStatus.noData);
   late AuthRole selectedRole;
+  void retry() => setStatus(RequestStatus.noData);
 
   final TextEditingController emailController = TextEditingController();
   final GlobalKey<FormState> signUpFormKey = GlobalKey<FormState>(
@@ -112,7 +111,7 @@ class SignUpController extends BaseRequestController {
     }
 
     if (result['status'] == true) {
-      UserModel user = UserModel.fromJson(
+      UserModel user = UserModel.fromApiData(
         result['data'],
         confirmedPasswordController.text.trim(),
       );
@@ -157,7 +156,7 @@ class SignUpController extends BaseRequestController {
     }
 
     if (result['status'] == true) {
-      UserModel user = UserModel.fromJson(result['data'], "");
+      UserModel user = UserModel.fromApiData(result['data'], "");
 
       (await user.cacheUser(user)).fold(
         (errorMessage) {

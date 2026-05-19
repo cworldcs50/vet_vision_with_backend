@@ -1,5 +1,8 @@
 import 'package:get/get.dart';
 
 class MessagesController extends GetxController {
-  // Logic for messages will go here
+  Future<void> refreshMessagesList() async {
+    await Future<void>.delayed(const Duration(milliseconds: 200));
+    update();
+  }
 }

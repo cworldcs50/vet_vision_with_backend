@@ -1,13 +1,15 @@
 import 'package:get/get.dart';
+import '../custom_auth_button.dart';
 import 'package:flutter/material.dart';
-import '../../doctor_portal_controller.dart';
 import '../../widgets/profile_field.dart';
 import '../../widgets/profile_section.dart';
+import '../../doctor_portal_controller.dart';
+import '../../widgets/time_slot_picker.dart';
+import 'view/clinic_location_picker_view.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../widgets/profile_image_header.dart';
-import '../../widgets/time_slot_picker_mock.dart';
-import '../../widgets/consultation_toggle_section.dart';
 import '../../../../core/classes/adaptive_layout.dart';
-import '../custom_auth_button.dart';
+import '../../widgets/consultation_toggle_section.dart';
 
 class DoctorProfileView extends GetView<DoctorPortalController> {
   const DoctorProfileView({super.key});
@@ -66,6 +68,65 @@ class DoctorProfileView extends GetView<DoctorPortalController> {
             height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 24),
           ),
           ProfileSection(
+            title: "Clinic Information",
+            children: [
+              ProfileField(
+                label: "Clinic Address",
+                textController: controller.clinicAddressController,
+              ),
+              SizedBox(
+                height: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 8,
+                ),
+              ),
+              InkWell(
+                onTap: () => Get.to(() => const ClinicLocationPickerView()),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 12,
+                    ),
+                    horizontal: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 16,
+                    ),
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: AppColors.accent),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.map, color: AppColors.accent),
+                      SizedBox(
+                        width: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 8,
+                        ),
+                      ),
+                      Obx(
+                        () => Text(
+                          "Pick on Google Maps (${controller.latitude.value.toStringAsFixed(4)}, ${controller.longitude.value.toStringAsFixed(4)})",
+                          style: const TextStyle(
+                            color: AppColors.accent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 24),
+          ),
+          ProfileSection(
             title: "Session Settings",
             children: [
               ProfileField(
@@ -81,24 +142,21 @@ class DoctorProfileView extends GetView<DoctorPortalController> {
           ),
           const ProfileSection(
             title: "Available Time Slots",
-            children: [TimeSlotPickerMock()],
+            children: [TimeSlotPicker()],
           ),
           SizedBox(
             height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 32),
           ),
           CustomAuthButton(
-            onPressed: () {
-              Get.snackbar(
-                "Success",
-                "Profile updated successfully",
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
-              );
-            },
-            backgroundColor: const Color(0xFF009689),
-            child: const Text(
+            onPressed: () async => await controller.updateProfile(),
+            backgroundColor: AppColors.accent,
+            child: Text(
               "Save Changes",
               style: TextStyle(
+                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 14,
+                ),
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),

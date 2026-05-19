@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/classes/adaptive_layout.dart';
+import '../../../core/theme/app_colors.dart';
 
 class ConsultationTypeTile extends StatelessWidget {
   final String title;
@@ -29,14 +30,19 @@ class ConsultationTypeTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(
           AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
         ),
-        color: value ? const Color(0xFFE0F2F1) : Colors.transparent,
+        color: value ? Colors.white : Colors.transparent,
       ),
       child: CheckboxListTile(
+        side: BorderSide(
+          color: value ? AppColors.accent : Colors.white,
+          width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 2),
+        ),
         value: value,
         onChanged: onChanged,
         title: Text(
           title,
           style: TextStyle(
+            color: value ? AppColors.accent : Colors.white,
             fontSize: AdaptiveLayout.getResponsiveFontSize(
               context,
               fontSize: 14,
@@ -47,13 +53,20 @@ class ConsultationTypeTile extends StatelessWidget {
         subtitle: Text(
           subtitle,
           style: TextStyle(
+            color: value ? AppColors.accent : Colors.white,
             fontSize: AdaptiveLayout.getResponsiveFontSize(
               context,
               fontSize: 12,
             ),
           ),
         ),
-        activeColor: const Color(0xFF009689),
+        activeColor: AppColors.accent,
+        checkboxShape: RoundedRectangleBorder(
+          side: BorderSide(
+            color: Colors.white,
+            width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 2),
+          ),
+        ),
         contentPadding: EdgeInsets.symmetric(
           horizontal: AdaptiveLayout.getResponsiveFontSize(
             context,

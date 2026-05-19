@@ -4,6 +4,7 @@ import '../../../../../core/network/request_status.dart';
 import '../../../../../core/constants/link_api.dart';
 import '../../../../../core/classes/failure_model.dart';
 import '../../../booking/model/doctor_model.dart';
+import '../models/user_dashboard_model.dart';
 import '../repository/home_data_repository.dart';
 
 class HomeDatasource implements IHomeRepository {
@@ -12,10 +13,50 @@ class HomeDatasource implements IHomeRepository {
   final Crud crud;
 
   @override
+  Future<Either<FailureModel, UserDashboardModel>> getUserDashboard() async {
+    final result = await crud.get(AppLink.userDashboard);
+    return result.fold(Left.new, (json) {
+      try {
+        final ok = json['status'] == true;
+        final raw = json['data'];
+        if (ok && raw is Map) {
+          final data = Map<String, dynamic>.from(raw);
+          data['animals'] ??= <dynamic>[];
+          data['recent_diagnoses'] ??= <dynamic>[];
+          data['favorite_doctors'] ??= <dynamic>[];
+          data['medical_alerts'] ??= <dynamic>[];
+          return Right(UserDashboardModel.fromJson(data));
+        }
+        return Left(
+          FailureModel(
+            message: json['message']?.toString() ?? 'Could not load dashboard',
+            status: RequestStatus.serverFailure,
+          ),
+        );
+      } catch (e) {
+        return Left(
+          FailureModel(
+            message: e.toString(),
+            status: RequestStatus.failure,
+          ),
+        );
+      }
+    });
+  }
+
+  @override
   Future<Either<FailureModel, Map>> getDoctors({
     Map<String, dynamic>? queryParams,
   }) async {
-    final result = await crud.get(AppLink.doctors);
+    final base = Uri.parse(AppLink.doctors);
+    final uri = queryParams == null || queryParams.isEmpty
+        ? base
+        : base.replace(
+            queryParameters: queryParams.map(
+              (key, value) => MapEntry(key, value.toString()),
+            ),
+          );
+    final result = await crud.get(uri.toString());
 
     return result;
   }

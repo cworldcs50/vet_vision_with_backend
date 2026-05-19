@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'core/routes/app_pages.dart';
 import 'core/constants/app_constants.dart';
 import 'core/routes/app_routes_name.dart';
-import 'core/theme/app_theme.dart';
+// import 'core/theme/app_theme.dart';
 
 class VetVision extends StatelessWidget {
   const VetVision({super.key});
@@ -13,11 +13,11 @@ class VetVision extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       getPages: kAppPages,
-      theme: AppTheme.lightTheme,
+      // theme: AppTheme.lightTheme,
       initialBinding: AppBinding(),
       title: AppConstants.kAppTitle,
-      initialRoute: AppRoutesName.rLogo,
       debugShowCheckedModeBanner: false,
+      initialRoute: AppRoutesName.rRoleSelection,
     );
   }
 }

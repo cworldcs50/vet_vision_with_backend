@@ -20,5 +20,12 @@ class AppRoutesName {
   static const String rForgetPassword = "/forgetPassword";
   static const String rBookAppointment = "/bookAppointment";
   static const String rVerifyCodeSignUp = "/verifyCodeSignUp";
+
+  static const String rDoctorAuthStep1 = "/doctorAuthStep1";
+  static const String rDoctorAuthStep2 = "/doctorAuthStep2";
+  static const String rDoctorAuthStep3 = "/doctorAuthStep3";
+  static const String rDoctorAuthStep4 = "/doctorAuthStep4";
+  static const String rDoctorVerifyCode = "/doctorVerifyCode";
+
   static const String rVerifyCodeForgetPassword = "/verifyCodeForgetPassword";
 }

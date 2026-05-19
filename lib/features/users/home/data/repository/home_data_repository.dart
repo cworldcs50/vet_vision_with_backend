@@ -1,8 +1,11 @@
 import 'package:dartz/dartz.dart';
 import '../../../../../core/classes/failure_model.dart';
 import '../../../booking/model/doctor_model.dart';
+import '../models/user_dashboard_model.dart';
 
 abstract class IHomeRepository {
+  Future<Either<FailureModel, UserDashboardModel>> getUserDashboard();
+
   Future<Either<FailureModel, Map>> getDoctors({Map<String, dynamic>? queryParams});
   Future<Either<FailureModel, List<DoctorModel>>> getNearestDoctors({
     required double lat,

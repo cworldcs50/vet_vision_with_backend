@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'custom_order_summary_row.dart';
 import 'custom_payment_method_option.dart';
 import '../../../../../core/classes/adaptive_layout.dart';
+import '../../../../../core/widgets/users_liquid_pull_to_refresh.dart';
 
 class MobilePayment extends StatelessWidget {
   const MobilePayment({super.key});
@@ -15,8 +16,11 @@ class MobilePayment extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<PaymentController>(
       builder: (controller) {
-        return SingleChildScrollView(
-          padding: EdgeInsets.symmetric(
+        return UsersLiquidPullToRefresh(
+          onRefresh: controller.refreshPaymentState,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(
             horizontal: AdaptiveLayout.getResponsiveFontSize(
               context,
               fontSize: 16,
@@ -179,6 +183,7 @@ class MobilePayment extends StatelessWidget {
               ),
             ],
           ),
+        ),
         );
       },
     );

@@ -6,27 +6,38 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter/material.dart';
 import '../../../../core/classes/failure_model.dart';
 import '../../../../core/classes/search_criteria.dart';
+import '../../../../core/constants/caching_keys_constants.dart';
 import '../../../../core/network/request_status.dart';
 import '../../../../core/routes/app_routes_name.dart';
+import '../../../../core/services/app_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../booking/model/doctor_model.dart';
+import '../data/models/user_dashboard_model.dart';
 import '../data/repository/home_data_repository.dart';
 
-
 class HomeController extends GetxController {
-  final IHomeRepository _homeRepository;
-
   HomeController({required IHomeRepository repository})
     : _homeRepository = repository;
 
-  int currentNavIndex = 0;
-  String selectedCategory = "All";
-  RequestStatus requestStatus = RequestStatus.noData;
-  Timer? _searchDebounce;
-  // Selected search criteria for the search bar (name or specialization)
-  List<SearchCriteria> activeSearchCriteria = [SearchCriteria.name];
+  final IHomeRepository _homeRepository;
 
-  // Advanced Filter States
+  int currentNavIndex = 0;
+  String selectedCategory = 'All';
+
+  RequestStatus doctorsStatus = RequestStatus.noData;
+  RequestStatus specializationsStatus = RequestStatus.noData;
+  RequestStatus dashboardStatus = RequestStatus.noData;
+
+  String? userDisplayName;
+  String? dashboardErrorMessage;
+  UserDashboardModel? userDashboard;
+
+  Timer? _searchDebounce;
+
+  /// Empty = match typed text against doctor name OR specialization (`search` on API).
+  /// [name] only / [specialization] only = narrow to that column.
+  List<SearchCriteria> activeSearchCriteria = [];
+
   final TextEditingController searchController = TextEditingController();
   final TextEditingController minPriceController = TextEditingController();
   final TextEditingController maxPriceController = TextEditingController();
@@ -35,47 +46,145 @@ class HomeController extends GetxController {
   List<DoctorModel> allDoctors = [];
   List<SearchCriteria> selectedCriteria = [];
   List<DoctorModel> filteredDoctors = [];
-  String selectedSortBy = "rating";
-  String selectedSessionType = "both"; // online, offline, both
+  String selectedSortBy = 'rating';
+  String selectedSessionType = 'both';
 
-  // Mock location for distance-based sorting
   double? lat = 30.0444;
   double? lng = 31.2357;
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
-    await fetchDoctors();
-    await fetchSpecialization();
+    _readCachedUserName();
+    unawaited(_loadHomeData());
+  }
+
+  void _readCachedUserName() {
+    try {
+      final prefs = Get.find<AppServices>().appSharedPrefs;
+      final name = prefs.getString(CachingKeysConstants.kUserFullName);
+      userDisplayName = (name != null && name.trim().isNotEmpty)
+          ? name.trim()
+          : null;
+    } catch (_) {
+      userDisplayName = null;
+    }
+  }
+
+  Future<void> _loadHomeData() async {
+    await Future.wait([
+      fetchUserDashboard(),
+      fetchSpecialization(),
+      fetchDoctors(params: buildDoctorListQueryParams()),
+    ]);
+  }
+
+  /// Same filters as the debounced search (for pull-to-refresh).
+  Map<String, dynamic> buildDoctorListQueryParams() {
+    final query = searchController.text.trim();
+    final Map<String, dynamic> params = {};
+
+    addDoctorTextSearchParams(query, params);
+
+    if (minPriceController.text.isNotEmpty) {
+      params['price_min'] = minPriceController.text;
+    }
+
+    if (maxPriceController.text.isNotEmpty) {
+      params['price_max'] = maxPriceController.text;
+    }
+
+    if (experienceController.text.isNotEmpty) {
+      params['experience_min'] = experienceController.text;
+    }
+
+    if (selectedSessionType != 'both') {
+      params['available'] = selectedSessionType == 'online'
+          ? 'true'
+          : 'false';
+    }
+
+    params['sort_by'] = selectedSortBy;
+    if (selectedSortBy == 'distance' ||
+        selectedSortBy == 'rating_and_distance') {
+      if (lat != null && lng != null) {
+        params['location_lat'] = lat.toString();
+        params['location_lng'] = lng.toString();
+      }
+    }
+
+    if (selectedCategory != 'All' &&
+        !activeSearchCriteria.contains(SearchCriteria.specialization) &&
+        !params.containsKey('specialization')) {
+      params['specialization'] = selectedCategory;
+    }
+
+    return params;
+  }
+
+  Future<void> refreshHomePull() async {
+    await Future.wait([
+      fetchUserDashboard(),
+      fetchSpecialization(),
+      fetchDoctors(params: buildDoctorListQueryParams()),
+    ]);
   }
 
   void onToggleCriteria(SearchCriteria searchCriteria) {}
 
-  Future<void> fetchSpecialization() async {
-    requestStatus = RequestStatus.loading;
-
+  Future<void> fetchUserDashboard() async {
+    dashboardStatus = RequestStatus.loading;
+    dashboardErrorMessage = null;
     update();
+
+    final Either<FailureModel, UserDashboardModel> result =
+        await _homeRepository.getUserDashboard();
+
+    result.fold(
+      (failure) {
+        dashboardStatus = failure.status;
+        dashboardErrorMessage = failure.message;
+        userDashboard = null;
+      },
+      (model) {
+        dashboardStatus = RequestStatus.success;
+        userDashboard = model;
+        dashboardErrorMessage = null;
+      },
+    );
+    update();
+  }
+
+  Future<void> fetchSpecialization() async {
+    specializationsStatus = RequestStatus.loading;
+    update();
+
     final Either<FailureModel, Map<dynamic, dynamic>> result =
         await _homeRepository.getSpecialization();
 
     result.fold(
       (failureModel) {
-        requestStatus = failureModel.status;
+        specializationsStatus = failureModel.status;
         Get.snackbar(
-          "Warning!",
+          'Warning!',
           failureModel.message,
           backgroundColor: AppColors.accent,
         );
       },
       (response) {
-        if (response["status"]) {
-          requestStatus = RequestStatus.success;
-          categories = ["All", ...response["data"]];
+        if (response['status'] == true) {
+          specializationsStatus = RequestStatus.success;
+          final raw = response['data'];
+          if (raw is List) {
+            categories = ['All', ...raw.map((e) => e.toString())];
+          } else {
+            categories = ['All'];
+          }
         } else {
-          requestStatus = RequestStatus.failure;
+          specializationsStatus = RequestStatus.failure;
           Get.snackbar(
-            "Warning!",
-            response["message"],
+            'Warning!',
+            response['message']?.toString() ?? 'Failed to load categories',
             backgroundColor: AppColors.accent,
           );
         }
@@ -86,29 +195,27 @@ class HomeController extends GetxController {
   }
 
   Future<void> fetchDoctors({Map<String, dynamic>? params}) async {
-    requestStatus = RequestStatus.loading;
-
+    doctorsStatus = RequestStatus.loading;
     update();
+
     final result = await _homeRepository.getDoctors(queryParams: params);
 
     result.fold(
       (failureModel) {
-        requestStatus = failureModel.status;
+        doctorsStatus = failureModel.status;
         Get.snackbar(
-          "Warning!",
+          'Warning!',
           failureModel.message,
           backgroundColor: AppColors.accent,
         );
       },
       (response) {
-        if (response["status"]) {
-          requestStatus = RequestStatus.success;
-          // The API response for /doctors might have a paginated structure (response["data"]["data"])
-          // or a direct list depending on the endpoint. Based on previous code, it's response["data"]["data"].
-          final data = response["data"];
-          List list;
-          if (data is Map && data.containsKey("data")) {
-            list = data["data"] as List;
+        if (response['status'] == true) {
+          doctorsStatus = RequestStatus.success;
+          final data = response['data'];
+          List<dynamic> list;
+          if (data is Map && data.containsKey('data')) {
+            list = data['data'] as List<dynamic>? ?? [];
           } else if (data is List) {
             list = data;
           } else {
@@ -116,14 +223,14 @@ class HomeController extends GetxController {
           }
 
           allDoctors = list
-              .map((doctor) => DoctorModel.fromJson(doctor))
+              .map((doctor) => DoctorModel.fromJson(doctor as Map<String, dynamic>))
               .toList();
           filteredDoctors = List.from(allDoctors);
         } else {
-          requestStatus = RequestStatus.failure;
+          doctorsStatus = RequestStatus.failure;
           Get.snackbar(
-            "Warning!",
-            response["message"],
+            'Warning!',
+            response['message']?.toString() ?? 'Failed to load doctors',
             backgroundColor: AppColors.accent,
           );
         }
@@ -140,23 +247,32 @@ class HomeController extends GetxController {
 
   void selectCategory(String category) async {
     selectedCategory = category;
-    log("Category selected: $category");
-    Map<String, dynamic> params = {};
-    if (category != "All") {
-      params["specialization"] = category;
+    log('Category selected: $category');
+    await fetchDoctors(params: buildDoctorListQueryParams());
+  }
+
+  /// Maps the search bar text to Laravel `/doctors` query params.
+  /// Backend: `search` = OR on user name and specialization; `name` / `specialization` = single-field filters.
+  void addDoctorTextSearchParams(String query, Map<String, dynamic> params) {
+    if (query.isEmpty) return;
+    final hasName = activeSearchCriteria.contains(SearchCriteria.name);
+    final hasSpec = activeSearchCriteria.contains(SearchCriteria.specialization);
+    if (hasName && !hasSpec) {
+      params['name'] = query;
+    } else if (hasSpec && !hasName) {
+      params['specialization'] = query;
+    } else {
+      params['search'] = query;
     }
-    // Also include search query if present
-    if (searchController.text.isNotEmpty) {
-      params["name"] = searchController.text;
-    }
-    await fetchDoctors(params: params);
   }
 
   void toggleSearchCriteria(SearchCriteria criteria) {
+    if (criteria != SearchCriteria.name &&
+        criteria != SearchCriteria.specialization) {
+      return;
+    }
     if (activeSearchCriteria.contains(criteria)) {
-      if (activeSearchCriteria.length > 1) {
-        activeSearchCriteria.remove(criteria);
-      }
+      activeSearchCriteria.remove(criteria);
     } else {
       activeSearchCriteria.add(criteria);
     }
@@ -185,7 +301,6 @@ class HomeController extends GetxController {
   TextInputType get keyboardType {
     if (selectedCriteria.isEmpty) return TextInputType.text;
 
-    // Numeric criteria
     final numericCriteria = [
       SearchCriteria.priceMin,
       SearchCriteria.priceMax,
@@ -194,7 +309,6 @@ class HomeController extends GetxController {
       SearchCriteria.distance,
     ];
 
-    // Check if all selected criteria are numeric
     final onlyNumeric = selectedCriteria.every(
       (c) => numericCriteria.contains(c),
     );
@@ -205,55 +319,7 @@ class HomeController extends GetxController {
   void onSearch(String query) async {
     if (_searchDebounce?.isActive ?? false) _searchDebounce!.cancel();
     _searchDebounce = Timer(const Duration(milliseconds: 500), () async {
-      Map<String, dynamic> params = {};
-
-      // 1. Text Search Criteria (from Search Bar)
-      if (query.isNotEmpty) {
-        for (var criteria in activeSearchCriteria) {
-          if (criteria == SearchCriteria.name) params["name"] = query;
-          if (criteria == SearchCriteria.specialization) {
-            params["specialization"] = query;
-          }
-        }
-      }
-
-      // 2. Persistent Advanced Filters
-      if (minPriceController.text.isNotEmpty) {
-        params["price_min"] = minPriceController.text;
-      }
-
-      if (maxPriceController.text.isNotEmpty) {
-        params["price_max"] = maxPriceController.text;
-      }
-
-      if (experienceController.text.isNotEmpty) {
-        params["experience_min"] = experienceController.text;
-      }
-
-      // 3. Session Type
-      if (selectedSessionType != "both") {
-        params["available"] = selectedSessionType == "online"
-            ? "true"
-            : "false";
-      }
-
-      // 4. Sorting & Location
-      params["sort_by"] = selectedSortBy;
-      if (selectedSortBy == "distance" ||
-          selectedSortBy == "rating_and_distance") {
-        if (lat != null && lng != null) {
-          params["location_lat"] = lat.toString();
-          params["location_lng"] = lng.toString();
-        }
-      }
-
-      // 5. Category (if not overridden by specialization search)
-      if (selectedCategory != "All" &&
-          !activeSearchCriteria.contains(SearchCriteria.specialization)) {
-        params["specialization"] = selectedCategory;
-      }
-
-      await fetchDoctors(params: params);
+      await fetchDoctors(params: buildDoctorListQueryParams());
     });
   }
 
@@ -261,6 +327,9 @@ class HomeController extends GetxController {
   void onClose() {
     _searchDebounce?.cancel();
     searchController.dispose();
+    minPriceController.dispose();
+    maxPriceController.dispose();
+    experienceController.dispose();
     super.onClose();
   }
 
@@ -268,7 +337,6 @@ class HomeController extends GetxController {
     Get.toNamed(AppRoutesName.rDoctorDetails, arguments: doctor);
   }
 
-  // Legacy mappings for buttons if we reuse them later, keeping for safety
   Future<void> goToBookAppointement() async =>
       await Get.toNamed(AppRoutesName.rBookAppointment);
 

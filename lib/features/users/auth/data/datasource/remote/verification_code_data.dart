@@ -8,8 +8,8 @@ class VerificationCodeData {
 
   Future<dynamic> verifyEmail(String email, String code) async {
     final result = await api.post(AppLink.verifyEmail, {
-      "email": email,
       "code": code,
+      "email": email,
     });
 
     return result;

@@ -55,4 +55,9 @@ class PaymentController extends GetxController {
     // After confirmation, normally you'd navigate to a Success screen
     // get.offAllNamed(AppRoutesName.rHome);
   }
+
+  Future<void> refreshPaymentState() async {
+    await Future<void>.delayed(Duration.zero);
+    update();
+  }
 }

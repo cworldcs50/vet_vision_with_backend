@@ -17,7 +17,6 @@ abstract class VerifyCodeSignUp extends BaseRequestController {
 
 class VerifyCodeSignUpImp extends VerifyCodeSignUp {
   late final String userGmail;
-
   late String verificationCode;
   late final VerificationCodeData verificationCodeData;
   final AuthenticationService _authService = AuthenticationService();
@@ -68,7 +67,7 @@ class VerifyCodeSignUpImp extends VerifyCodeSignUp {
 
     if (result['status'] == true) {
       log("Sign up success data: $result");
-      UserModel user = UserModel.fromJson(result['data'], "");
+      UserModel user = UserModel.fromApiData(result['data'], "");
 
       (await user.cacheUser(user)).fold(
         (errorMessage) {

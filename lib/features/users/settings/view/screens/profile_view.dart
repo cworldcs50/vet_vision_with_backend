@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../widgets/custom_setting_option.dart';
 import '../../../../../core/classes/adaptive_layout.dart';
+import '../../../../../core/widgets/users_liquid_pull_to_refresh.dart';
 import '../../controller/profile_controller.dart';
 
 class ProfileView extends GetView<ProfileController> {
@@ -30,8 +31,11 @@ class ProfileView extends GetView<ProfileController> {
         centerTitle: true,
       ),
       body: GetBuilder<ProfileController>(
-        builder: (controller) => SingleChildScrollView(
-          child: Column(
+        builder: (controller) => UsersLiquidPullToRefresh(
+          onRefresh: controller.refreshProfile,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            child: Column(
             children: [
               Container(
                 color: Colors.white,
@@ -176,6 +180,7 @@ class ProfileView extends GetView<ProfileController> {
               ),
             ],
           ),
+        ),
         ),
       ),
     );

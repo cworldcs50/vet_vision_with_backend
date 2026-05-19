@@ -42,12 +42,12 @@ class WelcomeBox extends GetView<DoctorPortalController> {
           Row(
             children: [
               Text(
-                "Welcome back, Doctor! 🩺",
+                "Welcome back, ${controller.fullNameController.text}! 🩺",
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: AdaptiveLayout.getResponsiveFontSize(
                     context,
-                    fontSize: 18,
+                    fontSize: 13,
                   ),
                   fontWeight: FontWeight.bold,
                 ),
@@ -74,4 +74,3 @@ class WelcomeBox extends GetView<DoctorPortalController> {
     );
   }
 }
-

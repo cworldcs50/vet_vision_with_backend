@@ -18,7 +18,7 @@ class SignInWithFacebook {
       "provider_id": providerId,
       "email": email,
       "name": name,
-      "avatar": ?avatar,
+      "avatar": avatar ?? "",
     });
 
     return result;

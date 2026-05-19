@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../controller/messages_controller.dart';
 import '../../../../../core/classes/adaptive_layout.dart';
+import '../../../../../core/widgets/users_liquid_pull_to_refresh.dart';
 
 class MessagesView extends GetView<MessagesController> {
   const MessagesView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    Get.put(MessagesController());
-
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F9),
       appBar: AppBar(
@@ -66,8 +65,11 @@ class MessagesView extends GetView<MessagesController> {
             ),
           ),
           Expanded(
-            child: ListView.separated(
-              itemCount: 4,
+            child: UsersLiquidPullToRefresh(
+              onRefresh: controller.refreshMessagesList,
+              child: ListView.separated(
+                physics: const AlwaysScrollableScrollPhysics(),
+                itemCount: 4,
               separatorBuilder: (context, index) => Divider(
                 height: AdaptiveLayout.getResponsiveFontSize(
                   context,
@@ -151,6 +153,7 @@ class MessagesView extends GetView<MessagesController> {
                   onTap: () {},
                 );
               },
+            ),
             ),
           ),
         ],

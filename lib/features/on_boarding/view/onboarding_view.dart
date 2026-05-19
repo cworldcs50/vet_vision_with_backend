@@ -4,11 +4,11 @@ import 'widgets/custom_page_view.dart';
 import 'package:flutter/material.dart';
 import 'widgets/custom_text_button.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_spacing.dart';
-import '../../../core/classes/adaptive_layout.dart';
 import 'widgets/custom_elevated_button.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../data/static/on_boarding_data.dart';
 import '../controller/on_boarding_controller.dart';
+import '../../../core/classes/adaptive_layout.dart';
 
 class OnboardingView extends GetView<OnBoardingController> {
   const OnboardingView({super.key});
@@ -23,11 +23,14 @@ class OnboardingView extends GetView<OnBoardingController> {
         actions: [
           Padding(
             padding: EdgeInsets.only(
-              right: AdaptiveLayout.getResponsiveFontSize(context, fontSize: AppSpacing.m),
+              right: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: AppSpacing.m,
+              ),
             ),
             child: CustomTextButton(
-              onPressed: controller.skip,
               btnTitle: "Skip",
+              onPressed: controller.skip,
             ),
           ),
         ],
@@ -45,19 +48,26 @@ class OnboardingView extends GetView<OnBoardingController> {
             ),
             Padding(
               padding: EdgeInsets.all(
-                AdaptiveLayout.getResponsiveFontSize(context, fontSize: AppSpacing.l),
+                AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: AppSpacing.l,
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const CustomSlider(),
                   SizedBox(
-                    height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: AppSpacing.xl),
+                    height: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: AppSpacing.xl,
+                    ),
                   ),
                   GetBuilder<OnBoardingController>(
                     builder: (controller) {
                       return CustomElevatedButton(
-                        buttonTitle: controller.currentPageIndex ==
+                        buttonTitle:
+                            controller.currentPageIndex ==
                                 kOnBoardingData.length - 1
                             ? "Get Started"
                             : "Next",
@@ -74,5 +84,3 @@ class OnboardingView extends GetView<OnBoardingController> {
     );
   }
 }
-
-

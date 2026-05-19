@@ -28,6 +28,11 @@ class ProfileController extends GetxController {
     update();
   }
 
+  Future<void> refreshProfile() async {
+    loadCachedUser();
+    await Future<void>.delayed(Duration.zero);
+  }
+
   Future<void> logout() async {
     await _crud.post(AppLink.logout, {}, {'Accept': 'application/json'});
     await _authService.logout();

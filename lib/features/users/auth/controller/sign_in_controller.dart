@@ -1,16 +1,15 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../../../core/classes/base_request_controller.dart';
-import '../../../../core/classes/validators.dart';
-import '../../../../core/constants/caching_keys_constants.dart';
-import '../../../../core/network/request_status.dart';
-import '../../../../core/routes/app_routes_name.dart';
-import '../../../../core/services/app_service.dart';
-import '../../../../core/services/authentication_service.dart';
-import '../../../../modules/auth/auth_module_router.dart';
-import '../../../../modules/auth/auth_role.dart';
+import 'package:flutter/material.dart';
 import '../data/models/user_model.dart';
+import '../../../../modules/auth/auth_role.dart';
+import '../../../../core/classes/validators.dart';
+import '../../../../core/services/app_service.dart';
+import '../../../../core/routes/app_routes_name.dart';
+import '../../../../core/network/request_status.dart';
+import '../../../../modules/auth/auth_module_router.dart';
+import '../../../../core/classes/base_request_controller.dart';
+import '../../../../core/constants/caching_keys_constants.dart';
+import '../../../../core/services/authentication_service.dart';
 
 class SignInController extends BaseRequestController {
   final AuthenticationService _authService = AuthenticationService();
@@ -101,7 +100,7 @@ class SignInController extends BaseRequestController {
         return;
       }
 
-      UserModel user = UserModel.fromJson(
+      UserModel user = UserModel.fromApiData(
         result['data'],
         passwordController.text.trim(),
       );
@@ -124,7 +123,9 @@ class SignInController extends BaseRequestController {
         result['message'] ?? "Please verify your email",
       );
       await Get.toNamed(
-        AppRoutesName.rVerifyCodeSignUp,
+        selectedRole == AuthRole.doctor
+            ? AppRoutesName.rDoctorVerifyCode
+            : AppRoutesName.rVerifyCodeSignUp,
         arguments: {
           "email": result["data"]["email"] ?? emailController.text.trim(),
         },
@@ -162,7 +163,7 @@ class SignInController extends BaseRequestController {
         return;
       }
 
-      UserModel user = UserModel.fromJson(result['data'], "");
+      UserModel user = UserModel.fromApiData(result['data'], "");
 
       (await user.cacheUser(user)).fold(
         (errorMessage) {

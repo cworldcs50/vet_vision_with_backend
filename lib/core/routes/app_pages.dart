@@ -1,4 +1,10 @@
 import 'package:get/get.dart';
+import '../../features/doctors/portal/auth/view/screens/doctor_login_view.dart';
+import '../../features/doctors/portal/auth/view/screens/doctor_verify_code_view.dart';
+import '../../features/doctors/portal/auth/view/screens/step1_personal_info.dart';
+import '../../features/doctors/portal/auth/view/screens/step2_professional_details.dart';
+import '../../features/doctors/portal/auth/view/screens/step3_practice_details.dart';
+import '../../features/doctors/portal/auth/view/screens/step4_location_view.dart';
 import '../../features/users/auth/view/screens/forget_password.dart';
 import '../../features/users/auth/view/screens/reset_password_view.dart';
 import '../../features/users/auth/view/screens/role_selection.dart';
@@ -71,14 +77,30 @@ List<GetPage> kAppPages = [
   ),
   GetPage(name: AppRoutesName.rCheckout, page: () => const Checkout()),
   GetPage(name: AppRoutesName.rPayment, page: () => const PaymentView()),
-  // GetPage(
-  //   name: AppRoutesName.rDoctorSignIn,
-  //   page: () => const DoctorLoginView(),
-  // ),
-  // GetPage(
-  //   name: AppRoutesName.rDoctorSignUp,
-  //   page: () => const DoctorRegistrationView(),
-  // ),
+  GetPage(
+    name: AppRoutesName.rDoctorSignIn,
+    page: () => const DoctorLoginView(),
+  ),
+  GetPage(
+    name: AppRoutesName.rDoctorAuthStep1,
+    page: () => const Step1PersonalInfo(),
+  ),
+  GetPage(
+    name: AppRoutesName.rDoctorAuthStep2,
+    page: () => const Step2ProfessionalDetails(),
+  ),
+  GetPage(
+    name: AppRoutesName.rDoctorAuthStep3,
+    page: () => const Step3PracticeDetails(),
+  ),
+  GetPage(
+    name: AppRoutesName.rDoctorAuthStep4,
+    page: () => const Step4LocationView(),
+  ),
+  GetPage(
+    name: AppRoutesName.rDoctorVerifyCode,
+    page: () => const DoctorVerifyCodeView(),
+  ),
   GetPage(
     name: AppRoutesName.rDoctorPortal,
     page: () => const DoctorPortalMainView(),
