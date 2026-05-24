@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../core/classes/adaptive_layout.dart';
+import '../../../core/theme/app_colors.dart';
 import '../doctor_portal_controller.dart';
 
 class TimeSlotPicker extends StatefulWidget {
@@ -13,7 +14,7 @@ class TimeSlotPicker extends StatefulWidget {
 
 class _TimeSlotPickerState extends State<TimeSlotPicker> {
   final controller = Get.find<DoctorPortalController>();
-  
+
   String selectedDay = 'Monday';
   TimeOfDay startTime = const TimeOfDay(hour: 9, minute: 0);
   TimeOfDay endTime = const TimeOfDay(hour: 17, minute: 0);
@@ -25,7 +26,7 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
     'Wednesday',
     'Thursday',
     'Friday',
-    'Saturday'
+    'Saturday',
   ];
 
   String _formatTimeOfDay(TimeOfDay time) {
@@ -69,7 +70,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             return Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(
-                vertical: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+                vertical: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 16,
+                ),
               ),
               decoration: BoxDecoration(
                 color: Colors.grey.shade50,
@@ -81,7 +85,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                   "No time slots added yet. 📅",
                   style: TextStyle(
                     color: Colors.grey.shade500,
-                    fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+                    fontSize: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 12,
+                    ),
                   ),
                 ),
               ),
@@ -93,14 +100,23 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             physics: const NeverScrollableScrollPhysics(),
             itemCount: controller.availabilities.length,
             separatorBuilder: (context, index) => SizedBox(
-              height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8),
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 8,
+              ),
             ),
             itemBuilder: (context, index) {
               final slot = controller.availabilities[index];
               return Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
-                  vertical: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 10),
+                  horizontal: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 12,
+                  ),
+                  vertical: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 10,
+                  ),
                 ),
                 decoration: BoxDecoration(
                   color: Colors.teal.shade50,
@@ -115,9 +131,17 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                         Icon(
                           Icons.calendar_today,
                           color: const Color(0xFF009689),
-                          size: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+                          size: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 16,
+                          ),
                         ),
-                        SizedBox(width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8)),
+                        SizedBox(
+                          width: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 8,
+                          ),
+                        ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -125,7 +149,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                               slot['day'] ?? '',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                                fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 13),
+                                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 13,
+                                ),
                                 color: Colors.teal.shade900,
                               ),
                             ),
@@ -133,7 +160,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                               "${slot['start_time']} - ${slot['end_time']}",
                               style: TextStyle(
                                 color: Colors.teal.shade700,
-                                fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 11),
+                                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 11,
+                                ),
                               ),
                             ),
                           ],
@@ -141,7 +171,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                       ],
                     ),
                     IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                      icon: const Icon(
+                        Icons.delete_outline,
+                        color: Colors.redAccent,
+                      ),
                       onPressed: () => controller.removeAvailability(index),
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -152,26 +185,36 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             },
           );
         }),
-        SizedBox(height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16)),
-        
+        SizedBox(
+          height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+        ),
+
         // Add New Slot Section Header
         Text(
           "Add Time Slot",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.black87,
-            fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 13),
+            fontSize: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 13,
+            ),
           ),
         ),
-        SizedBox(height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8)),
-        
+        SizedBox(
+          height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8),
+        ),
+
         // Select Day Dropdown
         Container(
           padding: EdgeInsets.symmetric(
-            horizontal: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+            horizontal: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 12,
+            ),
           ),
           decoration: BoxDecoration(
-            color: Colors.grey.shade50,
+            color: AppColors.accent,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.grey.shade200),
           ),
@@ -181,13 +224,13 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
               isExpanded: true,
               style: TextStyle(
                 color: Colors.black87,
-                fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 13),
+                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 13,
+                ),
               ),
               items: days.map((String day) {
-                return DropdownMenuItem<String>(
-                  value: day,
-                  child: Text(day),
-                );
+                return DropdownMenuItem<String>(value: day, child: Text(day));
               }).toList(),
               onChanged: (value) {
                 if (value != null) {
@@ -199,8 +242,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             ),
           ),
         ),
-        SizedBox(height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12)),
-        
+        SizedBox(
+          height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+        ),
+
         // Pick Times Row
         Row(
           children: [
@@ -209,7 +254,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                 onTap: () => _selectStartTime(context),
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    vertical: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 10),
+                    vertical: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 10,
+                    ),
                   ),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade50,
@@ -222,16 +270,27 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                         "Start Time",
                         style: TextStyle(
                           color: Colors.grey.shade600,
-                          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 10),
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 10,
+                          ),
                         ),
                       ),
-                      SizedBox(height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 4)),
+                      SizedBox(
+                        height: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 4,
+                        ),
+                      ),
                       Text(
                         startTime.format(context),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
-                          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 13),
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                     ],
@@ -239,13 +298,21 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                 ),
               ),
             ),
-            SizedBox(width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12)),
+            SizedBox(
+              width: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 12,
+              ),
+            ),
             Expanded(
               child: InkWell(
                 onTap: () => _selectEndTime(context),
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    vertical: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 10),
+                    vertical: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 10,
+                    ),
                   ),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade50,
@@ -258,16 +325,27 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                         "End Time",
                         style: TextStyle(
                           color: Colors.grey.shade600,
-                          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 10),
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 10,
+                          ),
                         ),
                       ),
-                      SizedBox(height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 4)),
+                      SizedBox(
+                        height: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 4,
+                        ),
+                      ),
                       Text(
                         endTime.format(context),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
-                          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 13),
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 13,
+                          ),
                         ),
                       ),
                     ],
@@ -277,8 +355,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             ),
           ],
         ),
-        SizedBox(height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16)),
-        
+        SizedBox(
+          height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+        ),
+
         // Add Button
         InkWell(
           onTap: () {
@@ -301,7 +381,10 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 13),
+                  fontSize: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ),

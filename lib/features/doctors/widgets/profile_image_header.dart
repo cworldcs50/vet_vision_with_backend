@@ -41,7 +41,8 @@ class ProfileImageHeader extends GetView<DoctorPortalController> {
                     backgroundColor: Colors.grey.shade200,
                     backgroundImage: ctrl.profileImage != null
                         ? FileImage(File(ctrl.profileImage!.path))
-                        : (url.isNotEmpty ? NetworkImage(url) : null) as ImageProvider?,
+                        : (url.isNotEmpty ? NetworkImage(url) : null)
+                              as ImageProvider?,
                     child: ctrl.profileImage == null && url.isEmpty
                         ? Icon(
                             Icons.person,
@@ -61,14 +62,14 @@ class ProfileImageHeader extends GetView<DoctorPortalController> {
             bottom: 0,
             right: 0,
             child: InkWell(
-              onTap: () async => await controller.pickImage(),
+              onTap: controller.pickImage,
               child: Container(
                 padding: EdgeInsets.all(
                   AdaptiveLayout.getResponsiveFontSize(context, fontSize: 6),
                 ),
                 decoration: const BoxDecoration(
-                  color: AppColors.accent,
                   shape: BoxShape.circle,
+                  color: AppColors.accent,
                 ),
                 child: Icon(
                   Icons.edit,

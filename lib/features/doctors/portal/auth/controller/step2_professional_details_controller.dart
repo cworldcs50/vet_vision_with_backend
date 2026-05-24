@@ -3,14 +3,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../../core/routes/app_routes_name.dart';
 
-class Step2ProfessionalDetailsController
-    extends GetxController {
-
+class Step2ProfessionalDetailsController extends GetxController {
   // =========================
   // Form Key
   // =========================
-  final GlobalKey<FormState> doctorStep2FormKey =
-      GlobalKey<FormState>();
+  final GlobalKey<FormState> doctorStep2FormKey = GlobalKey<FormState>();
 
   // =========================
   // Navigation
@@ -24,14 +21,11 @@ class Step2ProfessionalDetailsController
   final TextEditingController specializationController =
       TextEditingController();
 
-  final TextEditingController experienceController =
-      TextEditingController();
+  final TextEditingController experienceController = TextEditingController();
 
-  final TextEditingController licenseController =
-      TextEditingController();
+  final TextEditingController licenseController = TextEditingController();
 
-  final TextEditingController bioController =
-      TextEditingController();
+  final TextEditingController bioController = TextEditingController();
 
   // =========================
   // Image Picker
@@ -44,9 +38,16 @@ class Step2ProfessionalDetailsController
   // Methods
   // =========================
 
+  bool _isPicked = false;
+
   Future<void> pickImage() async {
-    final XFile? image =
-        await imagePicker.pickImage(
+    if (_isPicked) {
+      return;
+    }
+
+    _isPicked = true;
+
+    final XFile? image = await imagePicker.pickImage(
       source: ImageSource.gallery,
     );
 
@@ -54,6 +55,8 @@ class Step2ProfessionalDetailsController
       profileImage = image;
       update();
     }
+
+    _isPicked = false;
   }
 
   void nextStep() {
@@ -83,7 +86,6 @@ class Step2ProfessionalDetailsController
     experienceController.dispose();
     licenseController.dispose();
     bioController.dispose();
-
 
     super.onClose();
   }

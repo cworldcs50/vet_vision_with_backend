@@ -5,12 +5,32 @@ import '../../../../../../core/network/request_status.dart';
 import '../../../../../../core/routes/app_routes_name.dart';
 import '../../../../../../core/constants/images_constants.dart';
 import '../../../../../../core/theme/app_colors.dart';
-import '../../../../../users/auth/controller/sign_in_controller.dart';
+import '../../controller/doctor_sign_in_controller.dart';
 import '../widgets/custom_text_form_field.dart';
 import '../../../custom_auth_button.dart';
 
-class DoctorLoginView extends StatelessWidget {
+class DoctorLoginView extends StatefulWidget {
   const DoctorLoginView({super.key});
+
+  @override
+  State<DoctorLoginView> createState() => _DoctorLoginViewState();
+}
+
+class _DoctorLoginViewState extends State<DoctorLoginView> {
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>(
+    debugLabel: 'doctorSignInFormKey',
+  );
+
+  @override
+  void dispose() {
+    if (Get.isRegistered<DoctorSignInController>()) {
+      final controller = Get.find<DoctorSignInController>();
+      if (controller.signInFormKey == _formKey) {
+        controller.signInFormKey = null;
+      }
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,9 +39,10 @@ class DoctorLoginView extends StatelessWidget {
     // it's better to handle binding in AppPages.
     return Scaffold(
       backgroundColor: AppColors.accent, // Doctor theme color
-      body: GetBuilder<SignInController>(
-        init: SignInController(),
-        builder: (controller) {
+      body: GetBuilder<DoctorSignInController>(
+        init: DoctorSignInController(),
+        builder: (DoctorSignInController controller) {
+          controller.signInFormKey = _formKey;
           return Stack(
             children: [
               SingleChildScrollView(
@@ -51,11 +72,19 @@ class DoctorLoginView extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(
+                          AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 20,
+                          ),
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.1),
-                            blurRadius: 10,
+                            blurRadius: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 10,
+                            ),
                             offset: const Offset(0, 4),
                           ),
                         ],
@@ -114,11 +143,19 @@ class DoctorLoginView extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
+                        borderRadius: BorderRadius.circular(
+                          AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 30,
+                          ),
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.05),
-                            blurRadius: 20,
+                            blurRadius: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 20,
+                            ),
                             offset: const Offset(0, 10),
                           ),
                         ],
@@ -134,8 +171,8 @@ class DoctorLoginView extends StatelessWidget {
                                   context,
                                   fontSize: 24,
                                 ),
-                                fontWeight: FontWeight.bold,
                                 color: AppColors.accent,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
                             SizedBox(
@@ -157,22 +194,23 @@ class DoctorLoginView extends StatelessWidget {
                                 fontSize: 20,
                               ),
                             ),
-                            GetBuilder<SignInController>(
-                              builder: (c) => CustomTextFormField(
-                                hint: "********",
-                                label: "Password",
-                                prefixIcon: Icons.lock_outline,
-                                obscureText: c.showPassword,
-                                onPressed: c.visiblePassword,
-                                suffixIcon: c.showPasswordSuffixIcon,
-                                controller: controller.passwordController,
-                                validator: controller.passwordValidator,
-                              ),
+                            GetBuilder<DoctorSignInController>(
+                              builder: (DoctorSignInController c) =>
+                                  CustomTextFormField(
+                                    hint: "********",
+                                    label: "Password",
+                                    prefixIcon: Icons.lock_outline,
+                                    obscureText: c.showPassword,
+                                    onPressed: c.visiblePassword,
+                                    suffixIcon: c.showPasswordSuffixIcon,
+                                    controller: controller.passwordController,
+                                    validator: controller.passwordValidator,
+                                  ),
                             ),
                             Align(
                               alignment: Alignment.centerRight,
                               child: TextButton(
-                                onPressed: () => controller.forgetPassword(),
+                                onPressed: controller.forgetPassword,
                                 child: Text(
                                   "Forgot Password?",
                                   style: TextStyle(
@@ -193,8 +231,8 @@ class DoctorLoginView extends StatelessWidget {
                               ),
                             ),
                             CustomAuthButton(
-                              onPressed: () => controller.signIn(),
-                              backgroundColor: const Color(0xFF009689),
+                              onPressed: controller.signIn,
+                              backgroundColor: AppColors.accent,
                               child: const Text(
                                 "Sign In",
                                 style: TextStyle(
@@ -214,8 +252,12 @@ class DoctorLoginView extends StatelessWidget {
                               children: [
                                 const Expanded(child: Divider()),
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        AdaptiveLayout.getResponsiveFontSize(
+                                          context,
+                                          fontSize: 10,
+                                        ),
                                   ),
                                   child: Text(
                                     "Or sign in with",
@@ -243,13 +285,17 @@ class DoctorLoginView extends StatelessWidget {
                               children: [
                                 _SocialButton(
                                   icon: Icons.g_mobiledata,
-                                  onPressed: () => controller.authWithGoogle(),
+                                  onPressed: controller.authWithGoogle,
                                 ),
-                                const SizedBox(width: 20),
+                                SizedBox(
+                                  width: AdaptiveLayout.getResponsiveFontSize(
+                                    context,
+                                    fontSize: 20,
+                                  ),
+                                ),
                                 _SocialButton(
                                   icon: Icons.facebook,
-                                  onPressed: () =>
-                                      controller.authWithFacebook(),
+                                  onPressed: controller.authWithFacebook,
                                 ),
                               ],
                             ),
@@ -260,7 +306,7 @@ class DoctorLoginView extends StatelessWidget {
                               ),
                             ),
                             GestureDetector(
-                              onTap: () => Get.offNamed(
+                              onTap: () async => await Get.offNamed(
                                 AppRoutesName.rDoctorAuthStep1,
                                 arguments: {'role': 'doctor'},
                               ),
@@ -331,12 +377,20 @@ class _SocialButton extends StatelessWidget {
     return InkWell(
       onTap: onPressed,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+        ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey.shade300),
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(
+            AdaptiveLayout.getResponsiveFontSize(context, fontSize: 15),
+          ),
         ),
-        child: Icon(icon, size: 30, color: Colors.black87),
+        child: Icon(
+          icon,
+          size: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 30),
+          color: Colors.black87,
+        ),
       ),
     );
   }

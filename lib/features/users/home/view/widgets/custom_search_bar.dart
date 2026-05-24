@@ -52,6 +52,8 @@ class CustomSearchBar extends StatelessWidget {
               textAlign: TextAlign.left,
               textAlignVertical: TextAlignVertical.center,
               decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
                 hintText: 'Search by name, specialization...',
                 hintStyle: TextStyle(
                   color: Colors.grey,
@@ -422,10 +424,7 @@ class HomeFilterSheetSectionHeader extends StatelessWidget {
       child: Text(
         title,
         style: TextStyle(
-          fontSize: AdaptiveLayout.getResponsiveFontSize(
-            context,
-            fontSize: 16,
-          ),
+          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
           fontWeight: FontWeight.bold,
           color: AppColors.primary,
         ),
@@ -475,10 +474,7 @@ class HomeFilterSheetNumericTextField extends StatelessWidget {
             context,
             fontSize: 15,
           ),
-          vertical: AdaptiveLayout.getResponsiveFontSize(
-            context,
-            fontSize: 15,
-          ),
+          vertical: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 15),
         ),
       ),
     );

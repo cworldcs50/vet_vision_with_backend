@@ -20,7 +20,9 @@ class CustomCheckoutDoctorCard extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 24),
-          backgroundImage: AssetImage(imgPath),
+          backgroundImage: imgPath.startsWith('http')
+              ? NetworkImage(imgPath) as ImageProvider
+              : AssetImage(imgPath),
         ),
         SizedBox(
           width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),

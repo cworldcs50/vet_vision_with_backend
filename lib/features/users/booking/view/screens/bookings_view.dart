@@ -5,6 +5,7 @@ import '../../../../../core/classes/adaptive_layout.dart';
 import '../../../../../core/network/request_status.dart';
 import '../../../../../core/widgets/users_liquid_pull_to_refresh.dart';
 import '../../controller/bookings_controller.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class BookingsView extends StatelessWidget {
   const BookingsView({super.key});
@@ -196,14 +197,49 @@ class BookingsView extends StatelessWidget {
                                 ),
                                 title: Text(doctorName),
                                 subtitle: Text(
-                                  '$specialization\n${item.dateTime}',
+                                    '$specialization\n${item.dateTime}',
                                 ),
-                                trailing: Text(
-                                  item.status,
-                                  style: const TextStyle(
-                                    color: AppColors.primaryColor,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                trailing: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      item.status.capitalizeFirst ?? item.status,
+                                      style: TextStyle(
+                                        color: item.status == 'completed'
+                                            ? Colors.green
+                                            : AppColors.primaryColor,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    if (item.status == 'completed' && item.rating == null) ...[
+                                      const SizedBox(height: 4),
+                                      GestureDetector(
+                                        onTap: () => _showRatingDialog(context, controller, item.id),
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.amber,
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: const Text(
+                                            'Rate',
+                                            style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    ] else if (item.status == 'completed' && item.rating != null) ...[
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const Icon(Icons.star, color: Colors.amber, size: 14),
+                                          const SizedBox(width: 2),
+                                          Text('${item.rating}', style: const TextStyle(fontSize: 12)),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
                                 ),
                                 isThreeLine: true,
                               ),
@@ -215,6 +251,60 @@ class BookingsView extends StatelessWidget {
             ],
           );
         },
+      ),
+    );
+  }
+
+  void _showRatingDialog(BuildContext context, BookingsController controller, String appointmentId) {
+    double rating = 5.0;
+    final commentCtrl = TextEditingController();
+
+    Get.dialog(
+      AlertDialog(
+        title: const Text('Rate your visit'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            RatingBar.builder(
+              initialRating: 5,
+              minRating: 1,
+              direction: Axis.horizontal,
+              allowHalfRating: false,
+              itemCount: 5,
+              itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
+              itemBuilder: (context, _) => const Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              onRatingUpdate: (val) {
+                rating = val;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: commentCtrl,
+              decoration: const InputDecoration(
+                hintText: 'Leave a comment (optional)',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              controller.submitReview(appointmentId, rating.toInt(), commentCtrl.text);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryColor),
+            child: const Text('Submit', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }

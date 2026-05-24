@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../data/models/user_model.dart';
@@ -16,9 +18,10 @@ class SignInController extends BaseRequestController {
   final _sharedPrefs = Get.find<AppServices>().appSharedPrefs;
   late AuthRole selectedRole;
 
-  final GlobalKey<FormState> signInFormKey = GlobalKey<FormState>(
-    debugLabel: "signInFormKey",
-  );
+  /// Assigned by the owning StatefulWidget's State in initState.
+  /// The key must live in the widget tree (not the controller) to avoid
+  /// Duplicate GlobalKey errors during GetX route transitions.
+  GlobalKey<FormState>? signInFormKey;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -55,10 +58,11 @@ class SignInController extends BaseRequestController {
   }
 
   String _resolveRoleRoute(Map result) {
-    final role = AuthRole.fromValue(
-      result['data']?['user']?['role']?.toString(),
-    );
-    return AuthModuleRouter.homeRoute(role);
+    // final role = AuthRole.fromValue(
+    //   result['data']?['user']?['role']?.toString(),
+    // );
+    // return AuthModuleRouter.homeRoute(role);
+    return AppRoutesName.rHome;
   }
 
   bool _isRoleCompatible(Map result) {
@@ -69,70 +73,75 @@ class SignInController extends BaseRequestController {
   }
 
   Future<void> signIn() async {
+    log("Sign in");
+    if (requestStatus.value == RequestStatus.loading) return;
     if (!await checkOnline()) return;
 
-    if (!signInFormKey.currentState!.validate()) return;
+    if (signInFormKey?.currentState?.validate() == true) {
+      setStatus(RequestStatus.loading);
 
-    setStatus(RequestStatus.loading);
+      final result = await _authService.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
 
-    final result = await _authService.signInWithEmailAndPassword(
-      email: emailController.text.trim(),
-      password: passwordController.text.trim(),
-    );
+      final RequestStatus networkStatus = result['request_status'];
 
-    final RequestStatus networkStatus = result['request_status'];
-
-    if (networkStatus == RequestStatus.offlineFailure) {
-      showError("No Connection", "Please check your internet connection");
-      return;
-    }
-    if (networkStatus == RequestStatus.failure) {
-      showError("Error", "Connection failed. Please try again.");
-      return;
-    }
-
-    if (result['status'] == true) {
-      if (!_isRoleCompatible(result)) {
-        showError(
-          "Role Mismatch",
-          "This account is not registered as ${selectedRole.value}.",
-        );
+      if (networkStatus == RequestStatus.offlineFailure) {
+        showError("No Connection", "Please check your internet connection");
+        return;
+      }
+      if (networkStatus == RequestStatus.failure) {
+        showError("Error", "Connection failed. Please try again.");
         return;
       }
 
-      UserModel user = UserModel.fromApiData(
-        result['data'],
-        passwordController.text.trim(),
-      );
+      if (result['status'] == true) {
+        if (!_isRoleCompatible(result)) {
+          showError(
+            "Role Mismatch",
+            "This account is not registered as ${selectedRole.value}.",
+          );
+          return;
+        }
 
-      (await user.cacheUser(user)).fold(
-        (errorMessage) {
-          showError("Error", errorMessage);
-        },
-        (_) async {
-          await _sharedPrefs.setBool(CachingKeysConstants.kIsAuthedUser, true);
-          showMsg("Success", result['message'] ?? "Logged in!");
-          await Get.offAllNamed(_resolveRoleRoute(result));
-        },
-      );
-    } else if (result['status'] == false &&
-        result["data"] != null &&
-        result["data"]["needs_verification"] == true) {
-      showMsg(
-        "Verification Required",
-        result['message'] ?? "Please verify your email",
-      );
-      await Get.toNamed(
-        selectedRole == AuthRole.doctor
-            ? AppRoutesName.rDoctorVerifyCode
-            : AppRoutesName.rVerifyCodeSignUp,
-        arguments: {
-          "email": result["data"]["email"] ?? emailController.text.trim(),
-        },
-      );
-    } else {
-      final errorMsg = _extractErrorMessage(result);
-      showError("Login Failed", errorMsg);
+        UserModel user = UserModel.fromApiData(
+          result['data'],
+          passwordController.text.trim(),
+        );
+
+        (await user.cacheUser(user)).fold(
+          (errorMessage) {
+            showError("Error", errorMessage);
+          },
+          (_) async {
+            await _sharedPrefs.setBool(
+              CachingKeysConstants.kIsAuthedUser,
+              true,
+            );
+            showMsg("Success", result['message'] ?? "Logged in!");
+            await Get.offAllNamed(_resolveRoleRoute(result));
+          },
+        );
+      } else if (result['status'] == false &&
+          result["data"] != null &&
+          result["data"]["needs_verification"] == true) {
+        await Get.offAllNamed(
+          selectedRole == AuthRole.doctor
+              ? AppRoutesName.rDoctorVerifyCode
+              : AppRoutesName.rVerifyCodeSignUp,
+          arguments: {
+            "email": result["data"]["email"] ?? emailController.text.trim(),
+          },
+        );
+        showMsg(
+          "Verification Required",
+          result['message'] ?? "Please verify your email",
+        );
+      } else {
+        final errorMsg = _extractErrorMessage(result);
+        showError("Login Failed", errorMsg);
+      }
     }
   }
 
@@ -184,6 +193,7 @@ class SignInController extends BaseRequestController {
   Future<void> authWithGoogle() async {
     if (!await checkOnline()) return;
     setStatus(RequestStatus.loading);
+    log("google");
     final result = await _authService.authWithGoogle();
     if (result['status'] == false && result['request_status'] == null) {
       setStatus(RequestStatus.noData);

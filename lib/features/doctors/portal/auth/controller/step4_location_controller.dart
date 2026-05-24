@@ -14,7 +14,7 @@ import 'step3_practice_details_controller.dart';
 
 class Step4LocationController extends GetxController {
   final DoctorAuthRepository _repository = DoctorAuthRepository();
-  
+
   List<Marker> markers = [];
   CameraPosition? currentPos;
   Rx<RequestStatus> requestStatus = RequestStatus.success.obs;
@@ -24,10 +24,9 @@ class Step4LocationController extends GetxController {
 
   void addMarker(LatLng latLng) {
     markers.clear();
-    markers.add(Marker(
-      markerId: MarkerId("${latLng.latitude}"),
-      position: latLng,
-    ));
+    markers.add(
+      Marker(markerId: MarkerId("${latLng.latitude}"), position: latLng),
+    );
     lat = latLng.latitude;
     long = latLng.longitude;
     update();
@@ -48,9 +47,12 @@ class Step4LocationController extends GetxController {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
       }
-      
+
       if (permission == LocationPermission.deniedForever) {
-        Get.snackbar("Permission Denied", "Location permissions are permanently denied.");
+        Get.snackbar(
+          "Permission Denied",
+          "Location permissions are permanently denied.",
+        );
         requestStatus.value = RequestStatus.failure;
         return;
       }
@@ -74,7 +76,9 @@ class Step4LocationController extends GetxController {
   Future<void> completeRegistration() async {
     try {
       Get.dialog(
-        const Center(child: CircularProgressIndicator(color: Color(0xFF009689))),
+        const Center(
+          child: CircularProgressIndicator(color: Color(0xFF009689)),
+        ),
         barrierDismissible: false,
       );
 
@@ -84,13 +88,14 @@ class Step4LocationController extends GetxController {
       final token = prefs.getString(CachingKeysConstants.kUserToken) ?? "";
 
       final profileData = {
-        'specialization': step2Controller.specializationController.text,
-        'experience_years': step2Controller.experienceController.text,
-        'bio': step2Controller.bioController.text,
-        'consultation_fee': step3Controller.sessionCostController.text,
-        'clinic_address': step3Controller.clinicAddressController.text,
         'latitude': lat,
         'longitude': long,
+        'bio': step2Controller.bioController.text,
+        'license_number': step2Controller.licenseController.text,
+        'experience_years': step2Controller.experienceController.text,
+        'consultation_fee': step3Controller.sessionCostController.text,
+        'clinic_address': step3Controller.clinicAddressController.text,
+        'specialization': step2Controller.specializationController.text,
       };
 
       final response = await _repository.completeDoctorProfile(

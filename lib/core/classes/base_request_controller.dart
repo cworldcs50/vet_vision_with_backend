@@ -12,6 +12,7 @@ class BaseRequestController extends GetxController {
   Future<bool> checkOnline() async {
     final online = await isOnline();
     if (!online) {
+      showError("No Internet", "Please check your internet connection.");
       setStatus(RequestStatus.offlineFailure);
     }
     return online;

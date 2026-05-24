@@ -1,31 +1,21 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../../../../../core/network/request_status.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/classes/adaptive_layout.dart';
-import '../../../../../core/constants/images_constants.dart';
 import '../../controller/book_appointment_controller.dart';
-import '../../model/doctor_model.dart';
+import '../../controller/doctor_reviews_controller.dart';
+import 'review_card.dart';
 
 class MobileDoctorProfile extends GetView<BookAppointmentController> {
   const MobileDoctorProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final doctor = DoctorModel(
-      id: 0,
-      experienceYears: 1,
-      name: "Dr. Michael Chen",
-      specialization: "Veterinary Surgeon",
-      bio: "",
-      userId: 1,
-      email: "mohamedomer2582004@gmail.com",
-      phone: "01001454337",
-      address: "",
-      role: "doctor",
-      avatarUrl: ImagesConstants.doctorProfile,
-      imageUrl: ImagesConstants.doctorProfile,
-      distanceKm: 0.0,
-    );
+    final doctor = controller.currentDoctor;
+    if (doctor == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
 
     return Stack(
       children: [
@@ -84,21 +74,28 @@ class MobileDoctorProfile extends GetView<BookAppointmentController> {
                 // AdaptiveLayout.getResponsiveFontSize(context, fontSize: 10)orizontalSpace,
               ],
               flexibleSpace: FlexibleSpaceBar(
-                background: Image.asset(
-                  doctor.imageUrl,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) => Container(
-                    color: Colors.grey.shade300,
-                    child: Icon(
-                      Icons.person,
-                      size: AdaptiveLayout.getResponsiveFontSize(
-                        context,
-                        fontSize: 100,
+                background: doctor.isNetworkImage
+                    ? Image.network(
+                        doctor.imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset(doctor.avatarUrl, fit: BoxFit.cover),
+                      )
+                    : Image.asset(
+                        doctor.imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          color: Colors.grey.shade300,
+                          child: Icon(
+                            Icons.person,
+                            size: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 100,
+                            ),
+                            color: Colors.grey,
+                          ),
+                        ),
                       ),
-                      color: Colors.grey,
-                    ),
-                  ),
-                ),
               ),
             ),
             SliverToBoxAdapter(
@@ -170,28 +167,29 @@ class MobileDoctorProfile extends GetView<BookAppointmentController> {
                                       fontSize: 4,
                                     ),
                                   ),
-                                  // Text(
-                                  //   "${doctor.rating}",
-                                  //   style: TextStyle(
-                                  //     fontSize:
-                                  //         AdaptiveLayout.getResponsiveFontSize(
-                                  //           context,
-                                  //           fontSize: 14,
-                                  //         ),
-                                  //     fontWeight: FontWeight.bold,
-                                  //   ),
-                                  // ),
-                                  // Text(
-                                  //   " (${doctor.reviews})",
-                                  //   style: TextStyle(
-                                  //     fontSize:
-                                  //         AdaptiveLayout.getResponsiveFontSize(
-                                  //           context,
-                                  //           fontSize: 14,
-                                  //         ),
-                                  //     color: Colors.grey,
-                                  //   ),
-                                  // ),
+                                  Text(
+                                    doctor.ratingDisplay,
+                                    style: TextStyle(
+                                      fontSize:
+                                          AdaptiveLayout.getResponsiveFontSize(
+                                            context,
+                                            fontSize: 14,
+                                          ),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  if (doctor.rating != null)
+                                    Text(
+                                      " (${doctor.ratingDisplay})",
+                                      style: TextStyle(
+                                        fontSize:
+                                            AdaptiveLayout.getResponsiveFontSize(
+                                              context,
+                                              fontSize: 14,
+                                            ),
+                                        color: Colors.grey,
+                                      ),
+                                    ),
                                 ],
                               ),
                             ],
@@ -264,7 +262,7 @@ class MobileDoctorProfile extends GetView<BookAppointmentController> {
                                     ),
                                   ),
                                   Text(
-                                    "1,000+",
+                                    "—",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize:
@@ -325,7 +323,7 @@ class MobileDoctorProfile extends GetView<BookAppointmentController> {
                                     ),
                                   ),
                                   Text(
-                                    "8 Years",
+                                    "${doctor.experienceYears} Years",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize:
@@ -392,7 +390,9 @@ class MobileDoctorProfile extends GetView<BookAppointmentController> {
                           Obx(() {
                             if (controller.selectedTabIndex.value == 0) {
                               return Text(
-                                "Dr. Michael Chen is a highly experienced Veterinary Surgeon with over 8 years of practice. He specializes in advanced surgical procedures and provides compassionate care for all his patients. His state-of-the-art clinic is equipped to handle both routine and complex cases.",
+                                doctor.bio.isNotEmpty
+                                    ? doctor.bio
+                                    : "No bio available.",
                                 style: TextStyle(
                                   color: Colors.grey.shade600,
                                   fontSize:
@@ -406,29 +406,50 @@ class MobileDoctorProfile extends GetView<BookAppointmentController> {
                             } else if (controller.selectedTabIndex.value == 1) {
                               return Column(
                                 children: [
-                                  const CustomSessionCard(
-                                    type: "Online",
-                                    price: "\$40.00",
-                                    title: "Session Consultation",
-                                  ),
-
-                                  SizedBox(
-                                    height:
-                                        AdaptiveLayout.getResponsiveFontSize(
-                                          context,
-                                          fontSize: 15,
-                                        ),
-                                  ),
-                                  const CustomSessionCard(
-                                    price: "\$80.00",
-                                    type: "In-Person",
-                                    title: "Physical Examination",
-                                  ),
+                                  if (doctor.isOnline)
+                                    CustomSessionCard(
+                                      type: "Online",
+                                      price: doctor.feeDisplay,
+                                      title: "Online Consultation",
+                                    ),
+                                  if (doctor.isOnline && doctor.isInPerson)
+                                    SizedBox(
+                                      height:
+                                          AdaptiveLayout.getResponsiveFontSize(
+                                            context,
+                                            fontSize: 15,
+                                          ),
+                                    ),
+                                  if (doctor.isInPerson)
+                                    CustomSessionCard(
+                                      price: doctor.feeDisplay,
+                                      type: "In-Person",
+                                      title: "Clinic Visit",
+                                    ),
                                 ],
                               );
                             } else {
-                              return const Center(
-                                child: Text("Reviews coming soon"),
+                              return GetBuilder<DoctorReviewsController>(
+                                init: DoctorReviewsController()
+                                  ..fetchReviews(doctor.id.toString()),
+                                builder: (reviewsCtrl) {
+                                  if (reviewsCtrl.requestStatus.value ==
+                                      RequestStatus.loading) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  if (reviewsCtrl.reviews.isEmpty) {
+                                    return const Center(
+                                      child: Text("No reviews yet"),
+                                    );
+                                  }
+                                  return Column(
+                                    children: reviewsCtrl.reviews
+                                        .map((r) => ReviewCard(review: r))
+                                        .toList(),
+                                  );
+                                },
                               );
                             }
                           }),

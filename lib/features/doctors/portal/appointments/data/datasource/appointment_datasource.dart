@@ -114,7 +114,9 @@ class AppointmentDatasource {
             .toList(),
       );
     } catch (e) {
-      return Left(FailureModel(status: RequestStatus.failure, message: e.toString()));
+      return Left(
+        FailureModel(status: RequestStatus.failure, message: e.toString()),
+      );
     }
   }
 }

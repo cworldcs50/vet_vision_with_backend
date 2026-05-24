@@ -36,7 +36,6 @@ class RoleSelection extends StatelessWidget {
             padding: EdgeInsets.all(
               AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
             ),
-
             child: Image.asset(
               ImagesConstants.kLogo,
               width: AdaptiveLayout.getResponsiveFontSize(

@@ -7,7 +7,6 @@ import '../../../../core/network/request_status.dart';
 import '../../../../core/routes/app_routes_name.dart';
 import '../../../../core/services/authentication_service.dart';
 
-
 class ResetPasswordController extends BaseRequestController {
   final AuthenticationService _authService = AuthenticationService();
   final GlobalKey<FormState> resetPasswordFormKey = GlobalKey<FormState>(
@@ -75,6 +74,10 @@ class ResetPasswordController extends BaseRequestController {
   }
 
   Future<void> resetPassword() async {
+    // Prevent multiple requests (e.g., from double-tapping the button)
+    // Multiple Get.offAllNamed calls cause Duplicate GlobalKey exceptions.
+    if (requestStatus.value == RequestStatus.loading) return;
+
     if (!await checkOnline()) return;
 
     if (!resetPasswordFormKey.currentState!.validate()) return;
@@ -107,7 +110,7 @@ class ResetPasswordController extends BaseRequestController {
     if (result['status'] == true) {
       showMsg("Success", result['message'] ?? "Password reset successfully!");
       // Send user back to sign in screen
-      await Get.offAllNamed(AppRoutesName.rSignIn);
+      await Get.offAllNamed(AppRoutesName.rDoctorSignIn);
     } else {
       final errorMsg = _extractErrorMessage(result);
       showError("Reset Failed", errorMsg);

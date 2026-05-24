@@ -147,9 +147,9 @@ class Step1PersonalInfoController extends GetxController
 
   @override
   void onClose() {
-    fullNameController.dispose();
     emailController.dispose();
     phoneController.dispose();
+    fullNameController.dispose();
     passwordController.dispose();
     confirmedPasswordController.dispose();
     super.onClose();

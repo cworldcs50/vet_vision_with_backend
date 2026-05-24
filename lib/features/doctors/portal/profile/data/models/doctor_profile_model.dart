@@ -4,6 +4,7 @@ class DoctorProfileModel {
   final String phone;
   final String specialization;
   final int experienceYears;
+  final String licenseNumber;
   final String bio;
   final double consultationFee;
   final String clinicAddress;
@@ -21,6 +22,7 @@ class DoctorProfileModel {
     required this.phone,
     required this.specialization,
     required this.experienceYears,
+    required this.licenseNumber,
     required this.bio,
     required this.consultationFee,
     required this.clinicAddress,
@@ -49,6 +51,7 @@ class DoctorProfileModel {
       phone: user?['phone'] ?? '',
       specialization: map['specialization'] ?? '',
       experienceYears: map['experience_years'] ?? 0,
+      licenseNumber: map['license_number'] ?? '',
       bio: map['bio'] ?? '',
       consultationFee: (map['consultation_fee'] ?? 0).toDouble(),
       clinicAddress: map['clinic_address'] ?? '',
@@ -58,13 +61,14 @@ class DoctorProfileModel {
       latitude: (map['latitude'] ?? 30.05).toDouble(),
       longitude: (map['longitude'] ?? 31.233).toDouble(),
       availabilities: List<Map<String, dynamic>>.from(
-        (map['availabilities'] as List?)?.map(
-          (e) => {
-            'day': e['day'] ?? 'Monday',
+        (map['availabilities'] as List?)?.map((e) {
+          if (e is! Map) return <String, dynamic>{};
+          return <String, dynamic>{
+            'day':        e['day']        ?? 'Monday',
             'start_time': _formatTime(e['start_time']),
-            'end_time': _formatTime(e['end_time']),
-          },
-        ) ?? [],
+            'end_time':   _formatTime(e['end_time']),
+          };
+        }) ?? [],
       ),
     );
   }

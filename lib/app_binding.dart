@@ -7,12 +7,14 @@ import 'features/users/auth/controller/sign_in_controller.dart';
 import 'features/users/auth/controller/verify_code_sign_up.dart';
 import 'features/users/payment/controller/payment_controller.dart';
 import 'features/users/booking/controller/bookings_controller.dart';
+import 'features/users/pets/controller/my_pets_controller.dart';
 import 'features/users/settings/controller/profile_controller.dart';
 import 'features/users/booking/controller/checkout_controller.dart';
 import 'features/on_boarding/controller/on_boarding_controller.dart';
 import 'features/users/messages/controller/messages_controller.dart';
 import 'features/users/home/data/repository/home_data_repository.dart';
 import 'features/users/booking/controller/book_appointment_controller.dart';
+import 'features/users/booking/controller/doctor_reviews_controller.dart';
 import 'features/doctors/portal/auth/controller/step1_personal_info_controller.dart';
 import 'features/doctors/portal/auth/controller/step3_practice_details_controller.dart';
 import 'features/doctors/portal/auth/controller/step2_professional_details_controller.dart';
@@ -27,6 +29,7 @@ class AppBinding extends Bindings {
     );
     Get.lazyPut(() => OnBoardingController(), fenix: true);
     Get.lazyPut(() => BookAppointmentController(), fenix: true);
+    Get.lazyPut(() => DoctorReviewsController(), fenix: true);
     Get.lazyPut(() => SignInController(), fenix: true);
     Get.lazyPut(() => SignUpController(), fenix: true);
     Get.lazyPut(() => CheckoutController(), fenix: true);
@@ -38,5 +41,6 @@ class AppBinding extends Bindings {
     Get.lazyPut(() => Step3PracticeDetailsController(), fenix: true);
     Get.lazyPut(() => Step2ProfessionalDetailsController(), fenix: true);
     Get.lazyPut(() => Step1PersonalInfoController(), fenix: true);
+    Get.lazyPut(() => MyPetsController(), fenix: true); 
   }
 }

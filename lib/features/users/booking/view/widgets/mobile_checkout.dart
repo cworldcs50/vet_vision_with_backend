@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../../core/network/request_status.dart';
 import 'custom_elevated_btn.dart';
 import 'custom_additional_notes.dart';
 import 'custom_date_time_selector.dart';
@@ -78,10 +79,18 @@ class MobileCheckout extends GetView<CheckoutController> {
           // Continue to Payment Button
           SizedBox(
             width: double.infinity,
-            child: CustomElevatedBtn(
-              btnTitle: "Proceed to Payment",
-              onPressed: controller.proceedToPayment,
-            ),
+            child: Obx(() {
+              final isLoading = controller.paymentStatus.value ==
+                  RequestStatus.loading;
+              return isLoading
+                  ? const Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : CustomElevatedBtn(
+                      btnTitle: "Proceed to Payment",
+                      onPressed: controller.proceedToPayment,
+                    );
+            }),
           ),
           SizedBox(
             height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),

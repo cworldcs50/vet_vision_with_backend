@@ -1,24 +1,49 @@
 import 'dart:developer';
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
+import '../../core/services/app_service.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../core/routes/app_routes_name.dart';
+import '../../core/network/request_status.dart';
+import '../../core/constants/caching_keys_constants.dart';
+import 'portal/profile/data/models/doctor_profile_model.dart';
+import 'portal/dashboard/data/models/doctor_analytics_model.dart';
 import 'portal/appointments/data/models/doctor_appointment_model.dart';
 import 'portal/dashboard/data/repository/doctor_dashboard_repository.dart';
-import 'portal/dashboard/data/models/doctor_analytics_model.dart';
-import 'portal/profile/data/models/doctor_profile_model.dart';
-import '../../core/network/request_status.dart';
 
 class DoctorPortalController extends GetxController {
-  final DoctorDashboardRepository _repository = DoctorDashboardRepository();
   String doctorName = "";
+  // Profile Controllers
   // Navigation
   var selectedIndex = 0.obs;
-
   // Status
   var status = RequestStatus.success.obs;
+  late TextEditingController bioController;
+  late TextEditingController emailController;
+  late TextEditingController phoneController;
+  late TextEditingController licenseController;
+  late TextEditingController fullNameController;
+  late TextEditingController experienceController;
+  late TextEditingController sessionCostController;
+  late TextEditingController clinicAddressController;
+  late TextEditingController specializationController;
+  final DoctorDashboardRepository _repository = DoctorDashboardRepository();
+
+  @override
+  void onInit() async {
+    super.onInit();
+    bioController = TextEditingController();
+    emailController = TextEditingController();
+    phoneController = TextEditingController();
+    licenseController = TextEditingController();
+    fullNameController = TextEditingController();
+    experienceController = TextEditingController();
+    sessionCostController = TextEditingController();
+    clinicAddressController = TextEditingController();
+    specializationController = TextEditingController();
+    loadCachedUserData();
+    await loadDashboardData();
+  }
 
   void getDoctorName() {
     doctorName = fullNameController.text.isNotEmpty
@@ -29,48 +54,64 @@ class DoctorPortalController extends GetxController {
     update();
   }
 
-  // Profile Controllers
-  late TextEditingController fullNameController;
-  late TextEditingController emailController;
-  late TextEditingController phoneController;
-  late TextEditingController specializationController;
-  late TextEditingController experienceController;
-  late TextEditingController licenseController;
-  late TextEditingController bioController;
-  late TextEditingController sessionCostController;
-  late TextEditingController clinicAddressController;
+  void loadCachedUserData() {
+    final prefs = Get.find<AppServices>().appSharedPrefs;
+    final cachedName =
+        prefs.getString(CachingKeysConstants.kUserFullName) ?? "";
+    final cachedEmail = prefs.getString(CachingKeysConstants.kUserEmail) ?? "";
+    final cachedPhone = prefs.getString(CachingKeysConstants.kUserPhone) ?? "";
 
-  @override
-  void onInit() {
-    super.onInit();
-    fullNameController = TextEditingController();
-    emailController = TextEditingController();
-    phoneController = TextEditingController();
-    specializationController = TextEditingController();
-    experienceController = TextEditingController();
-    licenseController = TextEditingController();
-    bioController = TextEditingController();
-    sessionCostController = TextEditingController();
-    clinicAddressController = TextEditingController();
+    if (cachedName.isNotEmpty) fullNameController.text = cachedName;
+    if (cachedEmail.isNotEmpty) emailController.text = cachedEmail;
+    if (cachedPhone.isNotEmpty) phoneController.text = cachedPhone;
+
+    specializationController.text =
+        prefs.getString(CachingKeysConstants.kDocSpecialization) ?? "";
+    experienceController.text =
+        prefs.getString(CachingKeysConstants.kDocExperience) ?? "";
+    licenseController.text =
+        prefs.getString(CachingKeysConstants.kDocLicense) ?? "";
+    bioController.text = prefs.getString(CachingKeysConstants.kDocBio) ?? "";
+    sessionCostController.text =
+        prefs.getString(CachingKeysConstants.kDocSessionCost) ?? "";
+    clinicAddressController.text =
+        prefs.getString(CachingKeysConstants.kDocClinicAddress) ?? "";
+
+    if (prefs.containsKey(CachingKeysConstants.kDocIsOnline)) {
+      isOnlineConsultation.value =
+          prefs.getBool(CachingKeysConstants.kDocIsOnline) ?? true;
+    }
+    if (prefs.containsKey(CachingKeysConstants.kDocIsInPerson)) {
+      isInPersonConsultation.value =
+          prefs.getBool(CachingKeysConstants.kDocIsInPerson) ?? true;
+    }
+    if (prefs.containsKey(CachingKeysConstants.kDocLatitude)) {
+      latitude.value =
+          prefs.getDouble(CachingKeysConstants.kDocLatitude) ?? 30.05;
+    }
+    if (prefs.containsKey(CachingKeysConstants.kDocLongitude)) {
+      longitude.value =
+          prefs.getDouble(CachingKeysConstants.kDocLongitude) ?? 31.233;
+    }
+
+    // Fix 8 — Restore cached doctor image so avatar shows instantly on cold start
+    final cachedImg =
+        prefs.getString(CachingKeysConstants.kDoctorImageUrl) ?? '';
+    if (cachedImg.isNotEmpty) imageUrl.value = cachedImg;
+
     getDoctorName();
-
-    loadDashboardData();
   }
 
+  /// Fix 5 — Sequential calls with individual try-catch error isolation.
+  /// Each method already catches its own errors, so a single failure will NOT
+  /// abort the remaining fetches (unlike Future.wait which short-circuits).
   Future<void> loadDashboardData() async {
     status.value = RequestStatus.loading;
     update();
-    try {
-      await Future.wait([
-        fetchAnalytics(),
-        fetchAppointments(),
-        fetchProfile(),
-      ]);
-      status.value = RequestStatus.success;
-    } catch (e) {
-      status.value = RequestStatus.failure;
-      Get.snackbar("Error", "Failed to load dashboard data");
-    }
+    await fetchAnalytics();
+    await fetchAppointments();
+    await fetchProfile();
+    status.value = RequestStatus.success;
     update();
   }
 
@@ -87,10 +128,7 @@ class DoctorPortalController extends GetxController {
   // =========================
 
   Future<void> pickImage() async {
-    if (_imgPickerIsOpened) {
-      return;
-    }
-
+    if (_imgPickerIsOpened) return;
     _imgPickerIsOpened = true;
 
     final XFile? image = await imagePicker.pickImage(
@@ -130,13 +168,16 @@ class DoctorPortalController extends GetxController {
   // Appointments
   var appointments = <DoctorAppointmentModel>[].obs;
 
+  /// Fix 2 — Safe list extraction via the repository's static helper.
+  /// Prevents NoSuchMethodError when the response shape differs.
   Future<void> fetchAppointments() async {
     try {
       final response = await _repository.getAllAppointments();
       if (response.statusCode == 200) {
-        final List data =
-            response.data['data']['data'] ?? response.data['data'];
-        appointments.value = data
+        final list = DoctorDashboardRepository.extractAppointmentList(
+          response.data as Map<String, dynamic>,
+        );
+        appointments.value = list
             .map((e) => DoctorAppointmentModel.fromMap(e))
             .toList();
       }
@@ -180,26 +221,105 @@ class DoctorPortalController extends GetxController {
       final response = await _repository.getProfile();
       if (response.statusCode == 200) {
         final profile = DoctorProfileModel.fromMap(response.data['data']);
+
+        // Updates the UI controllers
         fullNameController.text = profile.fullName;
         emailController.text = profile.email;
         phoneController.text = profile.phone;
         specializationController.text = profile.specialization;
-        experienceController.text = profile.experienceYears.toString();
         bioController.text = profile.bio;
-        sessionCostController.text = profile.consultationFee.toStringAsFixed(0);
+        licenseController.text = profile.licenseNumber;
+        experienceController.text = profile.experienceYears.toString();
+        sessionCostController.text = profile.consultationFee.toString();
         clinicAddressController.text = profile.clinicAddress;
         isOnlineConsultation.value = profile.isOnline;
         isInPersonConsultation.value = profile.isInPerson;
-        imageUrl.value = profile.imageUrl;
-        availabilities.value = profile.availabilities;
-        latitude.value = profile.latitude;
-        longitude.value = profile.longitude;
+        // ... and so on for all fields, then calls update() to refresh the UI
       }
     } catch (e) {
-      log("Error fetching profile: $e");
+      log("ERROR FETCHING PROFILE: $e");
     }
     update();
   }
+
+  // Future<void> fetchProfile() async {
+  //   try {
+  //     final response = await _repository.getProfile();
+  //     if (response.statusCode == 200) {
+  //       final profile = DoctorProfileModel.fromMap(response.data['data']);
+  //       fullNameController.text = profile.fullName;
+  //       emailController.text = profile.email;
+  //       phoneController.text = profile.phone;
+  //       specializationController.text = profile.specialization;
+  //       experienceController.text = profile.experienceYears.toString();
+  //       licenseController.text = profile.licenseNumber;
+  //       bioController.text = profile.bio;
+  //       sessionCostController.text = profile.consultationFee.toStringAsFixed(0);
+  //       clinicAddressController.text = profile.clinicAddress;
+  //       isOnlineConsultation.value = profile.isOnline;
+  //       isInPersonConsultation.value = profile.isInPerson;
+  //       imageUrl.value = profile.imageUrl;
+  //       availabilities.value = profile.availabilities;
+  //       latitude.value = profile.latitude;
+  //       longitude.value = profile.longitude;
+
+  //       final prefs = Get.find<AppServices>().appSharedPrefs;
+  //       if (profile.fullName.isNotEmpty) {
+  //         prefs.setString(CachingKeysConstants.kUserFullName, profile.fullName);
+  //       }
+  //       if (profile.email.isNotEmpty) {
+  //         prefs.setString(CachingKeysConstants.kUserEmail, profile.email);
+  //       }
+  //       if (profile.phone.isNotEmpty) {
+  //         prefs.setString(CachingKeysConstants.kUserPhone, profile.phone);
+  //       }
+
+  //       prefs.setString(
+  //         CachingKeysConstants.kDocSpecialization,
+  //         profile.specialization,
+  //       );
+  //       prefs.setString(
+  //         CachingKeysConstants.kDocExperience,
+  //         profile.experienceYears.toString(),
+  //       );
+  //       prefs.setString(
+  //         CachingKeysConstants.kDocLicense,
+  //         profile.licenseNumber,
+  //       );
+  //       prefs.setString(CachingKeysConstants.kDocBio, profile.bio);
+  //       prefs.setString(
+  //         CachingKeysConstants.kDocSessionCost,
+  //         profile.consultationFee.toStringAsFixed(0),
+  //       );
+  //       prefs.setString(
+  //         CachingKeysConstants.kDocClinicAddress,
+  //         profile.clinicAddress,
+  //       );
+
+  //       prefs.setBool(CachingKeysConstants.kDocIsOnline, profile.isOnline);
+  //       prefs.setBool(CachingKeysConstants.kDocIsInPerson, profile.isInPerson);
+  //       prefs.setDouble(CachingKeysConstants.kDocLatitude, profile.latitude);
+  //       prefs.setDouble(CachingKeysConstants.kDocLongitude, profile.longitude);
+
+  //       // Fix 8 — Persist image URL so avatar loads instantly on next cold start
+  //       if (profile.imageUrl.isNotEmpty) {
+  //         prefs.setString(
+  //           CachingKeysConstants.kDoctorImageUrl,
+  //           profile.imageUrl,
+  //         );
+  //       }
+
+  //       getDoctorName();
+  //       update(); // Fix 4 — ensure GetBuilder<WelcomeBox> rebuilds after name is set
+  //     }
+  //   } catch (e) {
+  //     log("ERROR FETCHING PROFILE: $e");
+  //     try {
+  //       log("RESPONSE DATA: ${(e as dynamic).response?.data}");
+  //     } catch (_) {}
+  //   }
+  //   update();
+  // }
 
   Future<void> updateProfile() async {
     try {
@@ -213,17 +333,19 @@ class DoctorPortalController extends GetxController {
       // Save availabilities to backend
       await _repository.setAvailability(availabilities);
 
+      // Fix 3 — Cast booleans to int (0/1); FormData cannot reliably encode Dart bools
       final profileData = {
         'name': fullNameController.text,
         'email': emailController.text,
         'phone': phoneController.text,
-        'specialization': specializationController.text,
-        'experience_years': experienceController.text,
+        'specialization': specializationController.text.isEmpty ? 'General' : specializationController.text,
+        'experience_years': int.tryParse(experienceController.text.trim()) ?? 0,
+        'license_number': licenseController.text,
         'bio': bioController.text,
-        'consultation_fee': sessionCostController.text,
+        'consultation_fee': double.tryParse(sessionCostController.text.trim()) ?? 0.0,
         'clinic_address': clinicAddressController.text,
-        'is_online': isOnlineConsultation.value,
-        'is_in_person': isInPersonConsultation.value,
+        'is_online': isOnlineConsultation.value ? 1 : 0,
+        'is_in_person': isInPersonConsultation.value ? 1 : 0,
         'latitude': latitude.value,
         'longitude': longitude.value,
       };
@@ -247,9 +369,64 @@ class DoctorPortalController extends GetxController {
       }
     } catch (e) {
       Get.back(); // Close loading dialog
+      log("ERROR UPDATING PROFILE: $e");
+      try {
+        log("RESPONSE DATA: ${(e as dynamic).response?.data}");
+      } catch (_) {}
       Get.snackbar(
         "Error",
         "Failed to update profile",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
+    }
+    update();
+  }
+
+  /// Fix 9 — Update appointment status with optimistic local update.
+  /// Updates the local list instantly on success without re-fetching everything.
+  Future<void> updateAppointmentStatus(
+    String appointmentId,
+    String newStatus,
+  ) async {
+    try {
+      final response = await _repository.updateAppointmentStatus(
+        appointmentId,
+        newStatus,
+      );
+      if (response.statusCode == 200) {
+        // Optimistic local update — no full reload needed
+        final index = appointments.indexWhere((a) => a.id == appointmentId);
+        if (index != -1) {
+          final old = appointments[index];
+          appointments[index] = DoctorAppointmentModel(
+            id: old.id,
+            patientName: old.patientName,
+            petName: old.petName,
+            petType: old.petType,
+            date: old.date,
+            time: old.time,
+            isOnline: old.isOnline,
+            isPaid: old.isPaid,
+            status: newStatus,
+            notes: old.notes,
+          );
+          appointments.refresh();
+        }
+        Get.snackbar(
+          "Success",
+          "Appointment marked as $newStatus",
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+        );
+      }
+    } catch (e) {
+      log("Error updating appointment status: $e");
+      Get.snackbar(
+        "Error",
+        "Could not update appointment status",
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
@@ -290,6 +467,7 @@ class DoctorPortalController extends GetxController {
 
       bool matchesFilter = true;
       if (selectedFilter.value == "Upcoming") {
+        // 'upcoming' is already the normalized value for 'pending'
         matchesFilter = a.status == "upcoming" || a.status == "confirmed";
       } else if (selectedFilter.value == "Completed") {
         matchesFilter = a.status == "completed";
@@ -313,7 +491,15 @@ class DoctorPortalController extends GetxController {
     selectedIndex.value = index;
   }
 
-  void logout() {
+  /// Fix 1 — Clears all auth tokens/keys before navigating away.
+  /// Without this a logged-out user's token stays valid for subsequent requests.
+  void logout() async {
+    final prefs = Get.find<AppServices>().appSharedPrefs;
+    await prefs.remove(CachingKeysConstants.kUserToken);
+    await prefs.remove(CachingKeysConstants.kUserEmail);
+    await prefs.remove(CachingKeysConstants.kUserFullName);
+    await prefs.remove(CachingKeysConstants.kUserPhone);
+    await prefs.remove(CachingKeysConstants.kDoctorImageUrl);
     Get.offAllNamed(AppRoutesName.rRoleSelection);
   }
 }

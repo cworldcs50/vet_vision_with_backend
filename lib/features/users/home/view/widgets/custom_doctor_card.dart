@@ -38,18 +38,25 @@ class CustomDoctorCard extends GetView<HomeController> {
               borderRadius: BorderRadius.circular(
                 AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
               ),
-              child: Image.asset(
-                doctor.imageUrl,
-                width: AdaptiveLayout.getResponsiveFontSize(
-                  context,
-                  fontSize: 80,
-                ),
-                height: AdaptiveLayout.getResponsiveFontSize(
-                  context,
-                  fontSize: 80,
-                ),
-                fit: BoxFit.cover,
-              ),
+              child: doctor.isNetworkImage
+                  ? Image.network(
+                      doctor.imageUrl,
+                      width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
+                      height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => Image.asset(
+                        doctor.avatarUrl,
+                        width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
+                        height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                  : Image.asset(
+                      doctor.imageUrl,
+                      width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
+                      height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
+                      fit: BoxFit.cover,
+                    ),
             ),
             // AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12)orizontalSpace,
             Expanded(
@@ -110,55 +117,30 @@ class CustomDoctorCard extends GetView<HomeController> {
                       Icon(
                         Icons.star,
                         color: Colors.amber,
-                        size: AdaptiveLayout.getResponsiveFontSize(
-                          context,
-                          fontSize: 16,
+                        size: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+                      ),
+                      const SizedBox(width: 2),
+                      Text(
+                        doctor.ratingDisplay,
+                        style: TextStyle(
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                      SizedBox(
-                        height: AdaptiveLayout.getResponsiveFontSize(
-                          context,
-                          fontSize: 4,
-                        ),
-                      ),
-                      // Text(
-                      //   "${doctor.rating} (${doctor.reviews})",
-                      //   style: TextStyle(
-                      //     fontSize: AdaptiveLayout.getResponsiveFontSize(
-                      //       context,
-                      //       fontSize: 12,
-                      //     ),
-                      //     fontWeight: FontWeight.w600,
-                      //   ),
-                      // ),
-                      // SizedBox(
-                      //   width: AdaptiveLayout.getResponsiveFontSize(
-                      //     context,
-                      //     fontSize: 12,
-                      //   ),
-                      // ),
+                      const SizedBox(width: 8),
                       Icon(
                         Icons.location_on,
                         color: Colors.grey.shade400,
-                        size: AdaptiveLayout.getResponsiveFontSize(
-                          context,
-                          fontSize: 16,
-                        ),
+                        size: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
                       ),
-                      SizedBox(
-                        width: AdaptiveLayout.getResponsiveFontSize(
-                          context,
-                          fontSize: 4,
-                        ),
-                      ),
+                      const SizedBox(width: 2),
                       Text(
-                        "${doctor.distanceKm} km",
+                        doctor.distanceKm != null
+                            ? '${doctor.distanceKm!.toStringAsFixed(1)} km'
+                            : '—',
                         style: TextStyle(
                           color: Colors.grey.shade600,
-                          fontSize: AdaptiveLayout.getResponsiveFontSize(
-                            context,
-                            fontSize: 12,
-                          ),
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
                         ),
                       ),
                     ],

@@ -36,13 +36,15 @@ class DoctorPortalMainView extends StatelessWidget {
                 ),
               ),
             ),
-            Text(
-              controller.doctorName,
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: AdaptiveLayout.getResponsiveFontSize(
-                  context,
-                  fontSize: 11,
+            GetBuilder<DoctorPortalController>(
+              builder: (controller) => Text(
+                controller.doctorName,
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 11,
+                  ),
                 ),
               ),
             ),
@@ -112,6 +114,12 @@ class DoctorPortalMainView extends StatelessWidget {
               return const DoctorDashboardView();
           }
         }),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => Get.toNamed('/copilotChat'),
+        backgroundColor: const Color(0xFF1E3A5F), // Professional Dark Blue
+        icon: const Icon(Icons.medical_services, color: Colors.white),
+        label: const Text('Copilot', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
   }

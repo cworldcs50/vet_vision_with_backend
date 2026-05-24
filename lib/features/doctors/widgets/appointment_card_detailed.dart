@@ -1,12 +1,31 @@
-import '../portal/appointments/data/models/doctor_appointment_model.dart';
-import 'info_icon_text.dart';
+import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../portal/appointments/data/models/doctor_appointment_model.dart';
+import '../doctor_portal_controller.dart';
+import 'info_icon_text.dart';
 import '../../../core/classes/adaptive_layout.dart';
 
 class AppointmentCardDetailed extends StatelessWidget {
   final DoctorAppointmentModel appointment;
 
   const AppointmentCardDetailed({super.key, required this.appointment});
+
+  // Helper: convert month number to abbreviated name
+  String _monthName(int m) => const [
+        '',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+      ][m];
 
   @override
   Widget build(BuildContext context) {
@@ -37,6 +56,7 @@ class AppointmentCardDetailed extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // ── Header row: avatar + name + status badge ─────────────────────
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -57,7 +77,9 @@ class AppointmentCardDetailed extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        appointment.patientName[0],
+                        appointment.patientName.isNotEmpty
+                            ? appointment.patientName[0].toUpperCase()
+                            : '?',
                         style: TextStyle(
                           color: const Color(0xFF009689),
                           fontWeight: FontWeight.bold,
@@ -103,6 +125,7 @@ class AppointmentCardDetailed extends StatelessWidget {
                   ),
                 ],
               ),
+              // Status badge
               Container(
                 padding: EdgeInsets.symmetric(
                   horizontal: AdaptiveLayout.getResponsiveFontSize(
@@ -115,9 +138,10 @@ class AppointmentCardDetailed extends StatelessWidget {
                   ),
                 ),
                 decoration: BoxDecoration(
-                  color:
-                      appointment.status == "completed"
-                          ? Colors.blue.withValues(alpha: 0.1)
+                  color: appointment.status == 'completed'
+                      ? Colors.blue.withValues(alpha: 0.1)
+                      : appointment.status == 'cancelled'
+                          ? Colors.red.withValues(alpha: 0.1)
                           : const Color(0xFF009689).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(
                     AdaptiveLayout.getResponsiveFontSize(context, fontSize: 6),
@@ -131,23 +155,29 @@ class AppointmentCardDetailed extends StatelessWidget {
                       fontSize: 10,
                     ),
                     fontWeight: FontWeight.bold,
-                    color:
-                        appointment.status == "completed"
-                            ? Colors.blue
+                    color: appointment.status == 'completed'
+                        ? Colors.blue
+                        : appointment.status == 'cancelled'
+                            ? Colors.red
                             : const Color(0xFF009689),
                   ),
                 ),
               ),
             ],
           ),
+
           SizedBox(
             height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
           ),
+
+          // ── Date & time row ───────────────────────────────────────────────
           Row(
             children: [
-              const InfoIconText(
+              InfoIconText(
                 icon: Icons.calendar_today_outlined,
-                text: "Mar 25, 2026", // Mock date format
+                // Fix: real date from model, not hardcoded mock
+                text:
+                    "${appointment.date.day} ${_monthName(appointment.date.month)} ${appointment.date.year}",
               ),
               SizedBox(
                 width: AdaptiveLayout.getResponsiveFontSize(
@@ -158,16 +188,18 @@ class AppointmentCardDetailed extends StatelessWidget {
               InfoIconText(icon: Icons.access_time, text: appointment.time),
             ],
           ),
+
           SizedBox(
             height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8),
           ),
+
+          // ── Type & payment row ────────────────────────────────────────────
           Row(
             children: [
               InfoIconText(
-                icon:
-                    appointment.isOnline
-                        ? Icons.videocam_outlined
-                        : Icons.location_on_outlined,
+                icon: appointment.isOnline
+                    ? Icons.videocam_outlined
+                    : Icons.location_on_outlined,
                 text: appointment.isOnline ? "Online" : "In-Person",
               ),
               SizedBox(
@@ -183,6 +215,8 @@ class AppointmentCardDetailed extends StatelessWidget {
               ),
             ],
           ),
+
+          // ── Notes section ─────────────────────────────────────────────────
           if (appointment.notes.isNotEmpty) ...[
             SizedBox(
               height: AdaptiveLayout.getResponsiveFontSize(
@@ -227,6 +261,65 @@ class AppointmentCardDetailed extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ],
+
+          // ── Action buttons (only for upcoming / pending appointments) ─────
+          if (appointment.status == 'upcoming') ...[
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () =>
+                        Get.find<DoctorPortalController>()
+                            .updateAppointmentStatus(
+                              appointment.id,
+                              'cancelled',
+                            ),
+                    icon: const Icon(Icons.close, color: Colors.red, size: 16),
+                    label: const Text(
+                      "Cancel",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.red),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 8,
+                  ),
+                ),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () =>
+                        Get.find<DoctorPortalController>()
+                            .updateAppointmentStatus(
+                              appointment.id,
+                              'completed',
+                            ),
+                    icon: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    label: const Text(
+                      "Complete",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF009689),
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ],

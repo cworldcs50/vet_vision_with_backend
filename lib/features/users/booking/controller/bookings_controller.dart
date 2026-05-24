@@ -4,14 +4,19 @@ import '../../../../core/network/request_status.dart';
 import '../../../../core/services/app_service.dart';
 import '../../../doctors/portal/appointments/data/datasource/appointment_datasource.dart';
 import '../../../doctors/portal/appointments/data/models/appointment_model.dart';
+import '../data/review_datasource.dart';
 
 class BookingsController extends BaseRequestController {
   BookingsController()
     : _appointmentDatasource = AppointmentDatasource(
         crud: Get.find<AppServices>().crud,
+      ),
+      _reviewDatasource = ReviewDatasource(
+        crud: Get.find<AppServices>().crud,
       );
 
   final AppointmentDatasource _appointmentDatasource;
+  final ReviewDatasource _reviewDatasource;
   int selectedTabIndex = 0;
   List<AppointmentModel> appointments = [];
 
@@ -42,5 +47,23 @@ class BookingsController extends BaseRequestController {
   void changeTab(int index) {
     selectedTabIndex = index;
     update();
+  }
+
+  Future<void> submitReview(String appointmentId, int rating, String? comment) async {
+    setStatus(RequestStatus.loading);
+    
+    final result = await _reviewDatasource.submitReview(appointmentId, rating, comment: comment);
+    
+    result.fold(
+      (failure) {
+        setStatus(failure.status);
+        Get.snackbar('Error', failure.message);
+      },
+      (success) {
+        setStatus(RequestStatus.success);
+        Get.snackbar('Success', 'Review submitted successfully');
+        loadAppointments(); // Refresh the list to update `needs_rating` if applicable
+      },
+    );
   }
 }

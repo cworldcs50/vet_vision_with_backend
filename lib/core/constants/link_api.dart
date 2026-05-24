@@ -31,14 +31,15 @@ class AppLink {
       "$server/doctors/$id/availability-calendar";
 
   // ─── DOCTOR PROFILE (doctor role only) ──────────────────────────────────────
+  static const String doctorVerify = "$server/doctor/verify";
+  static const String doctorMyReviews = "$server/doctor/reviews";
   static const String doctorDashboard = "$server/doctor/dashboard";
   static const String doctorAnalytics = "$server/doctor/analytics";
-  static const String doctorUpdateProfile = "$server/doctor/update-profile";
-  static const String completeProfile = "$server/doctor/complete-profile";
-  static const String doctorMyReviews = "$server/doctor/reviews";
   static const String setAvailability = "$server/doctor/availability";
-  static const String doctorVerify = "$server/doctor/verify";
   static const String doctorAppointments = "$server/doctor/appointments";
+  static const String completeProfile = "$server/doctor/complete-profile";
+  static const String doctorProfile       = "$server/doctor/profile";
+  static const String doctorUpdateProfile = "$server/doctor/update-profile";
 
   // ─── USER DASHBOARD ─────────────────────────────────────────────────────────
   static const String userDashboard = "$server/user/dashboard";

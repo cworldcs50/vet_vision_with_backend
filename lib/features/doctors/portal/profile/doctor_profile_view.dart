@@ -36,13 +36,13 @@ class DoctorProfileView extends GetView<DoctorPortalController> {
               ),
               ProfileField(
                 label: "Email Address",
-                textController: controller.emailController,
                 keyboardType: TextInputType.emailAddress,
+                textController: controller.emailController,
               ),
               ProfileField(
                 label: "Phone Number",
-                textController: controller.phoneController,
                 keyboardType: TextInputType.phone,
+                textController: controller.phoneController,
               ),
               ProfileField(
                 label: "Specialization",
@@ -50,17 +50,17 @@ class DoctorProfileView extends GetView<DoctorPortalController> {
               ),
               ProfileField(
                 label: "Years of Experience",
-                textController: controller.experienceController,
                 keyboardType: TextInputType.number,
+                textController: controller.experienceController,
               ),
               ProfileField(
                 label: "License Number",
                 textController: controller.licenseController,
               ),
               ProfileField(
+                maxLines: 3,
                 label: "Bio",
                 textController: controller.bioController,
-                maxLines: 3,
               ),
             ],
           ),
@@ -81,7 +81,8 @@ class DoctorProfileView extends GetView<DoctorPortalController> {
                 ),
               ),
               InkWell(
-                onTap: () => Get.to(() => const ClinicLocationPickerView()),
+                onTap: () async =>
+                    await Get.to(() => const ClinicLocationPickerView()),
                 child: Container(
                   padding: EdgeInsets.symmetric(
                     vertical: AdaptiveLayout.getResponsiveFontSize(

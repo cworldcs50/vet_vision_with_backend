@@ -25,7 +25,10 @@ class MobileHomeLayout extends GetView<HomeController> {
               SliverToBoxAdapter(
                 child: Container(
                   padding: EdgeInsets.all(
-                    AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
+                    AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 20,
+                    ),
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF009689),
@@ -61,10 +64,13 @@ class MobileHomeLayout extends GetView<HomeController> {
                         onChanged: controller.onSearch,
                         controller: controller.searchController,
                         selectedCriteria: controller.selectedCriteria,
-                        onToggleCriteria: controller.toggleSearchCriteria,
+                        onToggleCriteria:
+                            controller.toggleSearchCriteria,
                         keyboardType: controller.keyboardType,
                         onSearchPressed: () {
-                          controller.onSearch(controller.searchController.text);
+                          controller.onSearch(
+                            controller.searchController.text,
+                          );
                         },
                       ),
                     ],
@@ -72,24 +78,120 @@ class MobileHomeLayout extends GetView<HomeController> {
                 ),
               ),
 
-              const SliverToBoxAdapter(child: HomeDashboardOverview()),
+              const SliverToBoxAdapter(
+                child: HomeDashboardOverview(),
+              ),
+
               SliverToBoxAdapter(
                 child: SizedBox(
                   height: AdaptiveLayout.getResponsiveFontSize(
                     context,
-                    fontSize: 12,
+                    fontSize: 16,
                   ),
                 ),
               ),
 
-              const SliverToBoxAdapter(child: CustomHomeCategories()),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 20,
+                    ),
+                  ),
+                  child: GestureDetector(
+                    onTap: () => Get.toNamed('/cvScan'),
+                    child: Container(
+                      padding: EdgeInsets.all(
+                        AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 16,
+                        ),
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF00BBA7),
+                            Color(0xFF00796B),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(
+                              0xFF009689,
+                            ).withValues(alpha: 0.3),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.biotech,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'AI Disease Scan',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Identify pet diseases with one photo',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(
+                                      alpha: 0.9,
+                                    ),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.white,
+                            size: 16,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
               SliverToBoxAdapter(
                 child: SizedBox(
                   height: AdaptiveLayout.getResponsiveFontSize(
                     context,
-                    fontSize: 20,
+                    fontSize: 24,
                   ),
                 ),
+              ),
+
+              const SliverToBoxAdapter(
+                child: CustomHomeCategories(),
               ),
 
               SliverToBoxAdapter(
@@ -110,12 +212,14 @@ class MobileHomeLayout extends GetView<HomeController> {
                     ),
                   ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
                         "All Doctors (${controller.allDoctors.length})",
                         style: TextStyle(
-                          fontSize: AdaptiveLayout.getResponsiveFontSize(
+                          fontSize:
+                              AdaptiveLayout.getResponsiveFontSize(
                             context,
                             fontSize: 18,
                           ),
@@ -136,50 +240,65 @@ class MobileHomeLayout extends GetView<HomeController> {
                 ),
               ),
 
-              if (controller.doctorsStatus == RequestStatus.loading)
+              if (controller.doctorsStatus ==
+                  RequestStatus.loading)
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      vertical: AdaptiveLayout.getResponsiveFontSize(
+                      vertical:
+                          AdaptiveLayout.getResponsiveFontSize(
                         context,
                         fontSize: 40,
                       ),
                     ),
-                    child: const Center(child: CircularProgressIndicator()),
+                    child: const Center(
+                      child: CircularProgressIndicator(),
+                    ),
                   ),
                 )
               else if (controller.allDoctors.isEmpty)
                 SliverToBoxAdapter(
                   child: Padding(
                     padding: EdgeInsets.symmetric(
-                      vertical: AdaptiveLayout.getResponsiveFontSize(
+                      vertical:
+                          AdaptiveLayout.getResponsiveFontSize(
                         context,
                         fontSize: 24,
                       ),
                     ),
-                    child: const Center(child: Text("No doctors found")),
+                    child: const Center(
+                      child: Text("No doctors found"),
+                    ),
                   ),
                 )
               else
                 SliverPadding(
                   padding: EdgeInsets.symmetric(
-                    horizontal: AdaptiveLayout.getResponsiveFontSize(
+                    horizontal:
+                        AdaptiveLayout.getResponsiveFontSize(
                       context,
                       fontSize: 20,
                     ),
-                    vertical: AdaptiveLayout.getResponsiveFontSize(
+                    vertical:
+                        AdaptiveLayout.getResponsiveFontSize(
                       context,
                       fontSize: 10,
                     ),
                   ),
                   sliver: SliverList.separated(
-                    itemCount: controller.filteredDoctors.length,
+                    itemCount:
+                        controller.filteredDoctors.length,
                     itemBuilder: (context, index) {
-                      final doctor = controller.filteredDoctors[index];
-                      return CustomDoctorCard(doctor: doctor);
+                      final doctor =
+                          controller.filteredDoctors[index];
+                      return CustomDoctorCard(
+                        doctor: doctor,
+                      );
                     },
-                    separatorBuilder: (context, index) => SizedBox(
-                      height: AdaptiveLayout.getResponsiveFontSize(
+                    separatorBuilder: (context, index) =>
+                        SizedBox(
+                      height:
+                          AdaptiveLayout.getResponsiveFontSize(
                         context,
                         fontSize: 15,
                       ),
