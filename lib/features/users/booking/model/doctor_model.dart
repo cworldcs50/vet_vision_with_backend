@@ -18,7 +18,8 @@ class DoctorModel {
 
   // ── Backend fields ──────────────────────────────────────────────────────────
   final double? rating;          // average_rating from backend
-  final double? consultationFee; // consultation_fee (single fee)
+  final double? consultationFeeOnline; // consultation_fee_online
+  final double? consultationFeeOffline; // consultation_fee_offline
   final bool isOnline;           // is_online
   final bool isInPerson;         // is_in_person
   final bool isVerified;         // is_verified
@@ -39,7 +40,8 @@ class DoctorModel {
     this.avatarUrl = ImagesConstants.doctorProfile,
     this.imageUrl = ImagesConstants.doctorProfile,
     this.rating,
-    this.consultationFee,
+    this.consultationFeeOnline,
+    this.consultationFeeOffline,
     this.isOnline = true,
     this.isInPerson = true,
     this.isVerified = false,
@@ -68,8 +70,11 @@ class DoctorModel {
       rating: json['average_rating'] != null
           ? (json['average_rating'] as num).toDouble()
           : null,
-      consultationFee: json['consultation_fee'] != null
-          ? (json['consultation_fee'] as num).toDouble()
+      consultationFeeOnline: json['consultation_fee_online'] != null
+          ? (json['consultation_fee_online'] as num).toDouble()
+          : null,
+      consultationFeeOffline: json['consultation_fee_offline'] != null
+          ? (json['consultation_fee_offline'] as num).toDouble()
           : null,
       isOnline: json['is_online'] == true || json['is_online'] == 1,
       isInPerson: json['is_in_person'] == true || json['is_in_person'] == 1,
@@ -83,7 +88,7 @@ class DoctorModel {
 
   /// Formatted fee string e.g. "EGP 200" or "—"
   String get feeDisplay =>
-      consultationFee != null ? 'EGP ${consultationFee!.toStringAsFixed(0)}' : '—';
+      consultationFeeOnline != null ? 'EGP ${consultationFeeOnline!.toStringAsFixed(0)}' : '—';
 
   /// Session types label
   String get sessionTypeLabel {

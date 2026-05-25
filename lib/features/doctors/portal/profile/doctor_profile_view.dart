@@ -131,8 +131,13 @@ class DoctorProfileView extends GetView<DoctorPortalController> {
             title: "Session Settings",
             children: [
               ProfileField(
-                label: "Session Cost (USD)",
-                textController: controller.sessionCostController,
+                label: "Session Cost Online (USD)",
+                textController: controller.sessionCostOnlineController,
+                keyboardType: TextInputType.number,
+              ),
+              ProfileField(
+                label: "Session Cost In-Person (USD)",
+                textController: controller.sessionCostOfflineController,
                 keyboardType: TextInputType.number,
               ),
               const ConsultationToggleSection(),

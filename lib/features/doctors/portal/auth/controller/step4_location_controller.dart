@@ -93,7 +93,8 @@ class Step4LocationController extends GetxController {
         'bio': step2Controller.bioController.text,
         'license_number': step2Controller.licenseController.text,
         'experience_years': step2Controller.experienceController.text,
-        'consultation_fee': step3Controller.sessionCostController.text,
+        'consultation_fee_online': step3Controller.sessionCostOnlineController.text,
+        'consultation_fee_offline': step3Controller.sessionCostOfflineController.text,
         'clinic_address': step3Controller.clinicAddressController.text,
         'specialization': step2Controller.specializationController.text,
       };

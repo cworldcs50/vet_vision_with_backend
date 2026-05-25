@@ -187,7 +187,9 @@ class BookAppointmentController extends GetxController {
           "appointmentId": appointmentId.toString(),
           "doctorName": currentDoctor!.name,
           "sessionType": sessionType,
-          "price": sessionType == 'online' ? 40.0 : 80.0,
+          "price": sessionType == 'online'
+              ? (currentDoctor!.consultationFeeOnline ?? 0.0)
+              : (currentDoctor!.consultationFeeOffline ?? 0.0),
         });
       } else {
         bookingStatus = RequestStatus.failure;

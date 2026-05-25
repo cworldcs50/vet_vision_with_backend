@@ -49,10 +49,25 @@ class Step3PracticeDetails extends GetView<Step3PracticeDetailsController> {
                 ),
                 CustomTextFormField(
                   hint: "\$ e.g., 50",
-                  label: "Session Cost (USD)",
+                  prefixIcon: Icons.attach_money,
+                  label: "Session Cost (USD) Online",
+                  keyboardType: TextInputType.number,
+                  controller: controller.sessionCostOnlineController,
+                  validator: (v) =>
+                      controller.commonValidator(v, "Session Cost"),
+                ),
+                SizedBox(
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 20,
+                  ),
+                ),
+                CustomTextFormField(
+                  hint: "\$ e.g., 50",
                   prefixIcon: Icons.attach_money,
                   keyboardType: TextInputType.number,
-                  controller: controller.sessionCostController,
+                  label: "Session Cost (USD) In-person",
+                  controller: controller.sessionCostOfflineController,
                   validator: (v) =>
                       controller.commonValidator(v, "Session Cost"),
                 ),

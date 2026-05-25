@@ -1,18 +1,19 @@
 class DoctorProfileModel {
-  final String fullName;
+  final String bio;
   final String email;
   final String phone;
-  final String specialization;
-  final int experienceYears;
-  final String licenseNumber;
-  final String bio;
-  final double consultationFee;
-  final String clinicAddress;
   final bool isOnline;
+  final String fullName;
   final bool isInPerson;
   final String imageUrl;
   final double latitude;
   final double longitude;
+  final int experienceYears;
+  final String licenseNumber;
+  final String clinicAddress;
+  final String specialization;
+  final double consultationFeeOnline;
+  final double consultationFeeOffline;
 
   final List<Map<String, dynamic>> availabilities;
 
@@ -24,7 +25,8 @@ class DoctorProfileModel {
     required this.experienceYears,
     required this.licenseNumber,
     required this.bio,
-    required this.consultationFee,
+    required this.consultationFeeOnline,
+    required this.consultationFeeOffline,
     required this.clinicAddress,
     required this.isOnline,
     required this.isInPerson,
@@ -53,7 +55,8 @@ class DoctorProfileModel {
       experienceYears: map['experience_years'] ?? 0,
       licenseNumber: map['license_number'] ?? '',
       bio: map['bio'] ?? '',
-      consultationFee: (map['consultation_fee'] ?? 0).toDouble(),
+      consultationFeeOnline: (map['consultation_fee_online'] ?? 0).toDouble(),
+      consultationFeeOffline: (map['consultation_fee_offline'] ?? 0).toDouble(),
       clinicAddress: map['clinic_address'] ?? '',
       isOnline: map['is_online'] ?? true,
       isInPerson: map['is_in_person'] ?? true,
@@ -62,13 +65,14 @@ class DoctorProfileModel {
       longitude: (map['longitude'] ?? 31.233).toDouble(),
       availabilities: List<Map<String, dynamic>>.from(
         (map['availabilities'] as List?)?.map((e) {
-          if (e is! Map) return <String, dynamic>{};
-          return <String, dynamic>{
-            'day':        e['day']        ?? 'Monday',
-            'start_time': _formatTime(e['start_time']),
-            'end_time':   _formatTime(e['end_time']),
-          };
-        }) ?? [],
+              if (e is! Map) return <String, dynamic>{};
+              return <String, dynamic>{
+                'day': e['day'] ?? 'Monday',
+                'start_time': _formatTime(e['start_time']),
+                'end_time': _formatTime(e['end_time']),
+              };
+            }) ??
+            [],
       ),
     );
   }

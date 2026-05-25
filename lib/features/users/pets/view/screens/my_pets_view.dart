@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../../core/classes/adaptive_layout.dart';
@@ -18,7 +20,7 @@ class MyPetsView extends GetView<MyPetsController> {
           'My Pets',
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.black,
         centerTitle: true,
@@ -184,7 +186,7 @@ class _PetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final hasImage = pet.imageUrl != null && pet.imageUrl!.isNotEmpty;
+    // final hasImage = pet.imageUrl != null && pet.imageUrl!.isNotEmpty;
 
     return Container(
       margin: EdgeInsets.only(
@@ -192,7 +194,9 @@ class _PetCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 18),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -216,22 +220,26 @@ class _PetCard extends StatelessWidget {
                 AdaptiveLayout.getResponsiveFontSize(context, fontSize: 18),
               ),
             ),
-            child: hasImage
-                ? Image.network(
-                    pet.imageUrl!,
-                    width: AdaptiveLayout.getResponsiveFontSize(
-                      context,
-                      fontSize: 90,
-                    ),
-                    height: AdaptiveLayout.getResponsiveFontSize(
-                      context,
-                      fontSize: 90,
-                    ),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        _defaultAvatar(context),
-                  )
-                : _defaultAvatar(context),
+            child:
+                // hasImage
+                // ?
+                Image.network(
+                  pet.imageUrl!,
+                  width: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 90,
+                  ),
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 90,
+                  ),
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    log(error.toString());
+                    return _defaultAvatar(context);
+                  },
+                ),
+            // : _defaultAvatar(context),
           ),
 
           const SizedBox(width: 14),

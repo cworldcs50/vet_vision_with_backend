@@ -48,7 +48,9 @@ class MobileBookAppointment extends GetView<BookAppointmentController> {
               children: [
                 // Doctor Card
                 CustomCheckoutDoctorCard(
-                  price: ctrl.currentDoctor!.consultationFee!,
+                  price: ctrl.sessionType == 'online'
+                      ? (ctrl.currentDoctor!.consultationFeeOnline ?? 0)
+                      : (ctrl.currentDoctor!.consultationFeeOffline ?? 0),
                   specialty: ctrl.currentDoctor!.specialization,
                   doctorName: ctrl.currentDoctor!.name,
                   imgPath: ctrl.currentDoctor!.imageUrl,
@@ -59,7 +61,6 @@ class MobileBookAppointment extends GetView<BookAppointmentController> {
                     fontSize: 24,
                   ),
                 ),
-
                 // Session Type
                 CustomSessionTypeSelector(
                   selectedType: ctrl.sessionType,

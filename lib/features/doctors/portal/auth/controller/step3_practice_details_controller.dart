@@ -19,7 +19,8 @@ class Step3PracticeDetailsController extends GetxController {
   // =========================
   // Controllers
   // =========================
-  final TextEditingController sessionCostController = TextEditingController();
+  final TextEditingController sessionCostOnlineController = TextEditingController();
+  final TextEditingController sessionCostOfflineController = TextEditingController();
 
   final TextEditingController clinicAddressController = TextEditingController();
 
@@ -75,7 +76,8 @@ class Step3PracticeDetailsController extends GetxController {
 
   @override
   void onClose() {
-    sessionCostController.dispose();
+    sessionCostOnlineController.dispose();
+    sessionCostOfflineController.dispose();
     clinicAddressController.dispose();
 
     super.onClose();

@@ -18,7 +18,8 @@ class CachingKeysConstants {
   static const String kDocExperience = "docExperience";
   static const String kDocLicense = "docLicense";
   static const String kDocBio = "docBio";
-  static const String kDocSessionCost = "docSessionCost";
+  static const String kDocSessionCostOnline = "docSessionCostOnline";
+  static const String kDocSessionCostOffline = "docSessionCostOffline";
   static const String kDocClinicAddress = "docClinicAddress";
   static const String kDocIsOnline = "docIsOnline";
   static const String kDocIsInPerson = "docIsInPerson";

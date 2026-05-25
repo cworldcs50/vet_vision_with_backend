@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:get/get.dart' hide Response, MultipartFile, FormData;
@@ -7,27 +8,25 @@ import '../../../../../core/services/app_service.dart';
 import '../../../../../features/doctors/portal/appointments/data/models/animal_model.dart';
 
 class PetsRepository {
-  late final Dio _dio;
+  final Dio _dio = Dio(
+    BaseOptions(headers: {'Accept': 'application/json'}),
+  );
 
-  PetsRepository() {
+  /// Always read the latest token so we never send a stale / empty Bearer.
+  Options get _authOptions {
     final token =
         Get.find<AppServices>().appSharedPrefs.getString(
           CachingKeysConstants.kUserToken,
-        ) ?? '';
-
-    _dio = Dio(
-      BaseOptions(
-        headers: {
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-      ),
-    );
+        ) ??
+        '';
+    log('PetsRepository token: $token');
+    return Options(headers: {'Authorization': 'Bearer $token'});
   }
 
   // ── Fetch all pets for the authenticated user ─────────────────────────────
   Future<List<AnimalModel>> fetchMyPets() async {
-    final res = await _dio.get(AppLink.myAnimals);
+    final res = await _dio.get(AppLink.myAnimals, options: _authOptions);
+    log('fetchMyPets response [${res.statusCode}]: ${res.data}');
     final raw = res.data['data'];
     final list = raw is List
         ? raw
@@ -49,9 +48,10 @@ class PetsRepository {
         filename: 'pet.jpg',
         contentType: DioMediaType('image', 'jpeg'),
       );
-      return _dio.post(AppLink.animals, data: FormData.fromMap(data));
+      return _dio.post(AppLink.animals,
+          data: FormData.fromMap(data), options: _authOptions);
     }
-    return _dio.post(AppLink.animals, data: fields);
+    return _dio.post(AppLink.animals, data: fields, options: _authOptions);
   }
 
   // ── Update an existing pet ────────────────────────────────────────────────
@@ -67,13 +67,15 @@ class PetsRepository {
         filename: 'pet.jpg',
         contentType: DioMediaType('image', 'jpeg'),
       );
-      return _dio.post(AppLink.animalUpdate(id), data: FormData.fromMap(data));
+      return _dio.post(AppLink.animalUpdate(id),
+          data: FormData.fromMap(data), options: _authOptions);
     }
-    return _dio.post(AppLink.animalUpdate(id), data: fields);
+    return _dio.post(AppLink.animalUpdate(id),
+        data: fields, options: _authOptions);
   }
 
   // ── Delete a pet ──────────────────────────────────────────────────────────
   Future<void> deletePet(String id) async {
-    await _dio.delete(AppLink.animal(id));
+    await _dio.delete(AppLink.animal(id), options: _authOptions);
   }
 }

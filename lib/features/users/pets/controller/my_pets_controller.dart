@@ -1,6 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
-import 'package:dio/dio.dart' show Response;
+import 'package:dio/dio.dart' show DioException, Response;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart' hide Response;
 import 'package:image_picker/image_picker.dart';
@@ -10,31 +10,31 @@ import '../data/pets_repository.dart';
 
 class MyPetsController extends GetxController {
   // ── State ────────────────────────────────────────────────────────────────────
-  var pets = <AnimalModel>[].obs;
-  var status = RequestStatus.loading.obs;
-  var formStatus = RequestStatus.noData.obs;
+  RxList<AnimalModel> pets = <AnimalModel>[].obs;
+  Rx<RequestStatus> status = RequestStatus.loading.obs;
+  Rx<RequestStatus> formStatus = RequestStatus.noData.obs;
   AnimalModel? editingPet; // null = adding new pet
 
   // ── Form fields ──────────────────────────────────────────────────────────────
-  final formKey = GlobalKey<FormState>();
-  late TextEditingController nameCtrl;
-  late TextEditingController speciesCtrl;
-  late TextEditingController breedCtrl;
-  late TextEditingController ageCtrl;
-  late TextEditingController weightCtrl;
-  String selectedGender = 'male';
   File? pickedImage;
   bool _isPickerOpen = false;
+  String selectedGender = 'male';
+  late TextEditingController ageCtrl;
+  late TextEditingController nameCtrl;
+  late TextEditingController breedCtrl;
+  late TextEditingController weightCtrl;
+  late TextEditingController speciesCtrl;
+  final formKey = GlobalKey<FormState>();
 
   // ── Repository ────────────────────────────────────────────────────────────────
-  final PetsRepository _repo = PetsRepository();
   final _imagePicker = ImagePicker();
+  final PetsRepository _repo = PetsRepository();
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     _initControllers();
-    fetchPets();
+    await fetchPets();
   }
 
   void _initControllers() {
@@ -50,11 +50,16 @@ class MyPetsController extends GetxController {
   Future<void> fetchPets() async {
     status.value = RequestStatus.loading;
     try {
-      final list = await _repo.fetchMyPets();
+      final List<AnimalModel> list = await _repo.fetchMyPets();
       pets.value = list;
       status.value = list.isEmpty
           ? RequestStatus.noData
           : RequestStatus.success;
+    } on DioException catch (e) {
+      log('FETCH PETS HTTP ERROR: ${e.response?.statusCode}');
+      log('FETCH PETS RESPONSE BODY: ${e.response?.data}');
+      log('FETCH PETS URL: ${e.requestOptions.uri}');
+      status.value = RequestStatus.failure;
     } catch (e) {
       log('FETCH PETS ERROR: $e');
       status.value = RequestStatus.failure;
@@ -105,8 +110,8 @@ class MyPetsController extends GetxController {
     _isPickerOpen = true;
     try {
       final xFile = await _imagePicker.pickImage(
-        maxWidth: 800,    // Resize width
-        maxHeight: 800,   // Resize height
+        maxWidth: 800, // Resize width
+        maxHeight: 800, // Resize height
         imageQuality: 30, // More aggressive compression
         source: ImageSource.gallery,
       );
