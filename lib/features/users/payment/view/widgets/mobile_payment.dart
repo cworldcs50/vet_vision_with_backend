@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'custom_order_summary_row.dart';
 import 'custom_payment_method_option.dart';
 import '../../../../../core/classes/adaptive_layout.dart';
+import '../../../../../core/network/request_status.dart';
 import '../../../../../core/widgets/users_liquid_pull_to_refresh.dart';
 
 class MobilePayment extends StatelessWidget {
@@ -37,7 +38,7 @@ class MobilePayment extends StatelessWidget {
                 specialty: "Session",
                 price: controller.consultationFee,
                 doctorName: controller.doctorName,
-                imgPath: "assets/images/doctor.png",
+                imgPath: controller.doctorImage,
               ),
               SizedBox(
                 height: AdaptiveLayout.getResponsiveFontSize(
@@ -166,15 +167,21 @@ class MobilePayment extends StatelessWidget {
                   fontSize: 32,
                 ),
               ),
-              SizedBox(
-                width: double.infinity,
-                child: CustomElevatedBtn(
-                  btnTitle: controller.selectedPaymentMethod == "visa"
-                      ? "Pay \$${controller.totalAmount.toStringAsFixed(0)}"
-                      : "Confirm Booking",
-                  onPressed: controller.confirmBooking,
-                ),
-              ),
+              Obx(() {
+                final isLoading = controller.paymentStatus.value ==
+                    RequestStatus.loading;
+                return SizedBox(
+                  width: double.infinity,
+                  child: isLoading
+                      ? const Center(child: CircularProgressIndicator())
+                      : CustomElevatedBtn(
+                          btnTitle: controller.selectedPaymentMethod == "visa"
+                              ? "Pay \$${controller.totalAmount.toStringAsFixed(0)}"
+                              : "Confirm Booking",
+                          onPressed: controller.confirmBooking,
+                        ),
+                );
+              }),
               SizedBox(
                 height: AdaptiveLayout.getResponsiveFontSize(
                   context,

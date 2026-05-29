@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import '../../../../../core/classes/crud.dart';
 import '../../../../../core/network/request_status.dart';
@@ -35,10 +37,7 @@ class HomeDatasource implements IHomeRepository {
         );
       } catch (e) {
         return Left(
-          FailureModel(
-            message: e.toString(),
-            status: RequestStatus.failure,
-          ),
+          FailureModel(message: e.toString(), status: RequestStatus.failure),
         );
       }
     });
@@ -168,6 +167,7 @@ class HomeDatasource implements IHomeRepository {
     try {
       final raw = json['data'];
       List list;
+      log(raw);
       if (raw is Map && raw.containsKey('data')) {
         list = raw['data'] as List;
       } else if (raw is List) {

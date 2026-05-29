@@ -56,10 +56,7 @@ class BookAppointmentController extends GetxController {
   }
 
   Future<void> _loadInitialData() async {
-    await Future.wait([
-      fetchAvailabilityCalendar(),
-      fetchAnimals(),
-    ]);
+    await Future.wait([fetchAvailabilityCalendar(), fetchAnimals()]);
   }
 
   // ── Tab ────────────────────────────────────────────────────────────────────
@@ -78,16 +75,13 @@ class BookAppointmentController extends GetxController {
       AppLink.availabilityCalendar(currentDoctor!.id.toString()),
     );
     final result = await _crud.get(uri.toString());
-    result.fold(
-      (failure) => calendarStatus = failure.status,
-      (json) {
-        calendarStatus = RequestStatus.success;
-        final list = json['data'] as List? ?? [];
-        availableDays = list
-            .map((e) => Map<String, dynamic>.from(e as Map))
-            .toList();
-      },
-    );
+    result.fold((failure) => calendarStatus = failure.status, (json) {
+      calendarStatus = RequestStatus.success;
+      final list = json['data'] as List? ?? [];
+      availableDays = list
+          .map((e) => Map<String, dynamic>.from(e as Map))
+          .toList();
+    });
     update();
   }
 
@@ -104,15 +98,12 @@ class BookAppointmentController extends GetxController {
     ).replace(queryParameters: {'date': date});
 
     final result = await _crud.get(uri.toString());
-    result.fold(
-      (failure) => slotsStatus = failure.status,
-      (json) {
-        slotsStatus = RequestStatus.success;
-        final data = json['data'] as Map<String, dynamic>? ?? {};
-        final slots = data['available_slots'] as List? ?? [];
-        availableSlots = slots.map((s) => s['time'].toString()).toList();
-      },
-    );
+    result.fold((failure) => slotsStatus = failure.status, (json) {
+      slotsStatus = RequestStatus.success;
+      final data = json['data'] as Map<String, dynamic>? ?? {};
+      final slots = data['available_slots'] as List? ?? [];
+      availableSlots = slots.map((s) => s['time'].toString()).toList();
+    });
     update();
   }
 
@@ -122,18 +113,17 @@ class BookAppointmentController extends GetxController {
     update();
 
     final result = await _crud.get(AppLink.myAnimals);
-    result.fold(
-      (failure) => animalsStatus = failure.status,
-      (json) {
-        animalsStatus = RequestStatus.success;
-        final raw = json['data'];
-        List list = raw is List ? raw : (raw is Map && raw['data'] is List ? raw['data'] as List : []);
-        animals = list
-            .map((e) => AnimalModel.fromJson(e as Map<String, dynamic>))
-            .toList();
-        if (animals.isNotEmpty) selectedAnimal = animals.first;
-      },
-    );
+    result.fold((failure) => animalsStatus = failure.status, (json) {
+      animalsStatus = RequestStatus.success;
+      final raw = json['data'];
+      List list = raw is List
+          ? raw
+          : (raw is Map && raw['data'] is List ? raw['data'] as List : []);
+      animals = list
+          .map((e) => AnimalModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      if (animals.isNotEmpty) selectedAnimal = animals.first;
+    });
     update();
   }
 
@@ -154,8 +144,10 @@ class BookAppointmentController extends GetxController {
 
   // ── Submit booking ─────────────────────────────────────────────────────────
   Future<void> confirmBooking() async {
-    if (currentDoctor == null || selectedDate == null ||
-        selectedSlot == null || selectedAnimal == null) {
+    if (currentDoctor == null ||
+        selectedDate == null ||
+        selectedSlot == null ||
+        selectedAnimal == null) {
       Get.snackbar('Missing Info', 'Please select a date, time slot and pet.');
       return;
     }
@@ -171,29 +163,37 @@ class BookAppointmentController extends GetxController {
         animalId: selectedAnimal!.id.toString(),
         dateTime: dateTime,
         type: sessionType == 'in-person' ? 'clinic' : sessionType,
-        reason: notesController.text.trim().length >= 5 
-            ? notesController.text.trim() 
+        reason: notesController.text.trim().length >= 5
+            ? notesController.text.trim()
             : 'General Consultation',
-        notes: notesController.text.trim().isNotEmpty ? notesController.text.trim() : null,
+        notes: notesController.text.trim().isNotEmpty
+            ? notesController.text.trim()
+            : null,
       );
 
       if (response['status'] == true) {
         bookingStatus = RequestStatus.success;
         Get.snackbar('Success', 'Appointment booked successfully!');
-        
+
         final appointmentId = response['data']['id'];
-        
-        Get.toNamed(AppRoutesName.rCheckout, arguments: {
-          "appointmentId": appointmentId.toString(),
-          "doctorName": currentDoctor!.name,
-          "sessionType": sessionType,
-          "price": sessionType == 'online'
-              ? (currentDoctor!.consultationFeeOnline ?? 0.0)
-              : (currentDoctor!.consultationFeeOffline ?? 0.0),
-        });
+
+        Get.toNamed(
+          AppRoutesName.rPayment,
+          arguments: {
+            "appointmentId": appointmentId.toString(),
+            "doctorName": currentDoctor!.name,
+            "sessionType": sessionType,
+            "price": sessionType == 'online'
+                ? (currentDoctor!.consultationFeeOnline ?? 0.0)
+                : (currentDoctor!.consultationFeeOffline ?? 0.0),
+          },
+        );
       } else {
         bookingStatus = RequestStatus.failure;
-        Get.snackbar('Error', response['message']?.toString() ?? 'Booking failed');
+        Get.snackbar(
+          'Error',
+          response['message']?.toString() ?? 'Booking failed',
+        );
       }
     } catch (e) {
       bookingStatus = RequestStatus.failure;

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class DoctorProfileModel {
   final String bio;
   final String email;
@@ -47,6 +49,7 @@ class DoctorProfileModel {
 
   factory DoctorProfileModel.fromMap(Map<String, dynamic> map) {
     final user = map['user'] ?? map['user_info'];
+    log(map['image_url'].toString().split("/").last);
     return DoctorProfileModel(
       fullName: user?['name'] ?? '',
       email: user?['email'] ?? '',
@@ -58,9 +61,17 @@ class DoctorProfileModel {
       consultationFeeOnline: (map['consultation_fee_online'] ?? 0).toDouble(),
       consultationFeeOffline: (map['consultation_fee_offline'] ?? 0).toDouble(),
       clinicAddress: map['clinic_address'] ?? '',
-      isOnline: map['is_online'] ?? true,
-      isInPerson: map['is_in_person'] ?? true,
-      imageUrl: map['image_url'] ?? '',
+      isOnline:
+          (map['is_online_available'] == 1 ||
+              map['is_online_available'] == true) ||
+          (map['is_online'] == 1 || map['is_online'] == true),
+      isInPerson:
+          (map['is_offline_available'] == 1 ||
+              map['is_offline_available'] == true) ||
+          (map['is_in_person'] == 1 || map['is_in_person'] == true),
+      imageUrl: map['image_url'] != null
+          ? "http://10.0.2.2/VetVision-API/VetVision-API/storage/app/public/doctors/${map['image_url'].toString().split("/").last}"
+          : '',
       latitude: (map['latitude'] ?? 30.05).toDouble(),
       longitude: (map['longitude'] ?? 31.233).toDouble(),
       availabilities: List<Map<String, dynamic>>.from(

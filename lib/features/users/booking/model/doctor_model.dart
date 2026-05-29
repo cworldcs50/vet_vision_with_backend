@@ -17,12 +17,12 @@ class DoctorModel {
   final String specialization;
 
   // ── Backend fields ──────────────────────────────────────────────────────────
-  final double? rating;          // average_rating from backend
+  final double? rating; // average_rating from backend
   final double? consultationFeeOnline; // consultation_fee_online
   final double? consultationFeeOffline; // consultation_fee_offline
-  final bool isOnline;           // is_online
-  final bool isInPerson;         // is_in_person
-  final bool isVerified;         // is_verified
+  final bool isOnline; // is_online
+  final bool isInPerson; // is_in_person
+  final bool isVerified; // is_verified
 
   DoctorModel({
     this.bio = '',
@@ -62,8 +62,11 @@ class DoctorModel {
       phone: userInfo['phone']?.toString(),
       address: userInfo['address']?.toString(),
       role: userInfo['role']?.toString() ?? 'doctor',
-      imageUrl: json['image_url']?.toString() ?? ImagesConstants.doctorProfile,
-      avatarUrl: userInfo['avatar_url']?.toString() ?? ImagesConstants.doctorProfile,
+      imageUrl: json['image_url'] != null
+          ? "http://10.0.2.2/VetVision-API/VetVision-API/storage/app/public/doctors/${json['image_url'].toString().split("/").last}"
+          : ImagesConstants.doctorProfile,
+      avatarUrl:
+          userInfo['avatar_url']?.toString() ?? ImagesConstants.doctorProfile,
       distanceKm: json['distance_km'] != null
           ? (json['distance_km'] as num).toDouble()
           : null,
@@ -83,12 +86,12 @@ class DoctorModel {
   }
 
   /// Formatted rating string e.g. "4.5" or "—"
-  String get ratingDisplay =>
-      rating != null ? rating!.toStringAsFixed(1) : '—';
+  String get ratingDisplay => rating != null ? rating!.toStringAsFixed(1) : '—';
 
   /// Formatted fee string e.g. "EGP 200" or "—"
-  String get feeDisplay =>
-      consultationFeeOnline != null ? 'EGP ${consultationFeeOnline!.toStringAsFixed(0)}' : '—';
+  String get feeDisplay => consultationFeeOnline != null
+      ? 'EGP ${consultationFeeOnline!.toStringAsFixed(0)}'
+      : '—';
 
   /// Session types label
   String get sessionTypeLabel {

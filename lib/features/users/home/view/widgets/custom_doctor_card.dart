@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import '../../controller/home_controller.dart';
@@ -38,25 +40,29 @@ class CustomDoctorCard extends GetView<HomeController> {
               borderRadius: BorderRadius.circular(
                 AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
               ),
-              child: doctor.isNetworkImage
-                  ? Image.network(
-                      doctor.imageUrl,
-                      width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
-                      height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, _, _) => Image.asset(
-                        doctor.avatarUrl,
-                        width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
-                        height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
-                        fit: BoxFit.cover,
-                      ),
-                    )
-                  : Image.asset(
-                      doctor.imageUrl,
-                      width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
-                      height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
-                      fit: BoxFit.cover,
+              child: Image.network(
+                doctor.imageUrl,
+                width: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 80,
+                ),
+                height: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 80,
+                ),
+                fit: BoxFit.cover,
+                errorBuilder: (_, error, _) {
+                  log(error.toString());
+                  return Icon(
+                    Icons.person,
+                    size: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 80,
                     ),
+                    color: Colors.grey,
+                  );
+                },
+              ),
             ),
             // AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12)orizontalSpace,
             Expanded(
@@ -117,13 +123,19 @@ class CustomDoctorCard extends GetView<HomeController> {
                       Icon(
                         Icons.star,
                         color: Colors.amber,
-                        size: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+                        size: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(width: 2),
                       Text(
                         doctor.ratingDisplay,
                         style: TextStyle(
-                          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 12,
+                          ),
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -131,7 +143,10 @@ class CustomDoctorCard extends GetView<HomeController> {
                       Icon(
                         Icons.location_on,
                         color: Colors.grey.shade400,
-                        size: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+                        size: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(width: 2),
                       Text(
@@ -140,7 +155,10 @@ class CustomDoctorCard extends GetView<HomeController> {
                             : '—',
                         style: TextStyle(
                           color: Colors.grey.shade600,
-                          fontSize: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ],

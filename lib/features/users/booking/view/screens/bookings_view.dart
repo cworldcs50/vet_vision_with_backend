@@ -141,8 +141,13 @@ class BookingsView extends StatelessWidget {
                   child: controller.requestStatus.value == RequestStatus.loading
                       ? ListView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          children: const [
-                            SizedBox(height: 120),
+                          children: [
+                            SizedBox(
+                              height: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 120,
+                              ),
+                            ),
                             Center(child: CircularProgressIndicator()),
                           ],
                         )
@@ -159,8 +164,13 @@ class BookingsView extends StatelessWidget {
                               fontSize: 16,
                             ),
                           ),
-                          children: const [
-                            SizedBox(height: 120),
+                          children: [
+                            SizedBox(
+                              height: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 120,
+                              ),
+                            ),
                             Center(child: Text('No appointments found')),
                           ],
                         )
@@ -195,47 +205,135 @@ class BookingsView extends StatelessWidget {
                                       .withValues(alpha: 0.15),
                                   child: const Icon(Icons.pets),
                                 ),
-                                title: Text(doctorName),
-                                subtitle: Text(
-                                    '$specialization\n${item.dateTime}',
+                                title: Text(
+                                  doctorName,
+                                  style: TextStyle(
+                                    fontSize:
+                                        AdaptiveLayout.getResponsiveFontSize(
+                                          context,
+                                          fontSize: 16,
+                                        ),
+                                  ),
                                 ),
+                                subtitle: Text(
+                                  '$specialization\n${item.dateTime}',
+                                  style: TextStyle(
+                                    fontSize:
+                                        AdaptiveLayout.getResponsiveFontSize(
+                                          context,
+                                          fontSize: 12,
+                                        ),
+                                  ),
+                                ),
+
                                 trailing: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Text(
-                                      item.status.capitalizeFirst ?? item.status,
+                                      item.status.capitalizeFirst ??
+                                          item.status,
                                       style: TextStyle(
                                         color: item.status == 'completed'
                                             ? Colors.green
                                             : AppColors.primaryColor,
                                         fontWeight: FontWeight.w600,
+                                        fontSize:
+                                            AdaptiveLayout.getResponsiveFontSize(
+                                              context,
+                                              fontSize: 10,
+                                            ),
                                       ),
                                     ),
-                                    if (item.status == 'completed' && item.rating == null) ...[
-                                      const SizedBox(height: 4),
+                                    if (item.status == 'completed' &&
+                                        item.rating == 0) ...[
+                                      SizedBox(
+                                        height:
+                                            AdaptiveLayout.getResponsiveFontSize(
+                                              context,
+                                              fontSize: 14,
+                                            ),
+                                      ),
                                       GestureDetector(
-                                        onTap: () => _showRatingDialog(context, controller, item.id),
+                                        onTap: () => _showRatingDialog(
+                                          context,
+                                          controller,
+                                          item.id,
+                                        ),
                                         child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal:
+                                                AdaptiveLayout.getResponsiveFontSize(
+                                                  context,
+                                                  fontSize: 12,
+                                                ),
+                                            vertical:
+                                                AdaptiveLayout.getResponsiveFontSize(
+                                                  context,
+                                                  fontSize: 4,
+                                                ),
+                                          ),
                                           decoration: BoxDecoration(
                                             color: Colors.amber,
-                                            borderRadius: BorderRadius.circular(12),
+                                            borderRadius: BorderRadius.circular(
+                                              AdaptiveLayout.getResponsiveFontSize(
+                                                context,
+                                                fontSize: 12,
+                                              ),
+                                            ),
                                           ),
-                                          child: const Text(
+                                          child: Text(
                                             'Rate',
-                                            style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize:
+                                                  AdaptiveLayout.getResponsiveFontSize(
+                                                    context,
+                                                    fontSize: 12,
+                                                  ),
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ] else if (item.status == 'completed' && item.rating != null) ...[
-                                      const SizedBox(height: 4),
+                                    ] else if (item.status == 'completed' &&
+                                        item.rating != null) ...[
+                                      SizedBox(
+                                        height:
+                                            AdaptiveLayout.getResponsiveFontSize(
+                                              context,
+                                              fontSize: 4,
+                                            ),
+                                      ),
                                       Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          const Icon(Icons.star, color: Colors.amber, size: 14),
-                                          const SizedBox(width: 2),
-                                          Text('${item.rating}', style: const TextStyle(fontSize: 12)),
+                                          Icon(
+                                            Icons.star,
+                                            color: Colors.amber,
+                                            size:
+                                                AdaptiveLayout.getResponsiveFontSize(
+                                                  context,
+                                                  fontSize: 14,
+                                                ),
+                                          ),
+                                          SizedBox(
+                                            width:
+                                                AdaptiveLayout.getResponsiveFontSize(
+                                                  context,
+                                                  fontSize: 2,
+                                                ),
+                                          ),
+                                          Text(
+                                            '${item.rating}',
+                                            style: TextStyle(
+                                              fontSize:
+                                                  AdaptiveLayout.getResponsiveFontSize(
+                                                    context,
+                                                    fontSize: 12,
+                                                  ),
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ],
@@ -255,7 +353,11 @@ class BookingsView extends StatelessWidget {
     );
   }
 
-  void _showRatingDialog(BuildContext context, BookingsController controller, String appointmentId) {
+  void _showRatingDialog(
+    BuildContext context,
+    BookingsController controller,
+    String appointmentId,
+  ) {
     double rating = 5.0;
     final commentCtrl = TextEditingController();
 
@@ -266,16 +368,14 @@ class BookingsView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             RatingBar.builder(
-              initialRating: 5,
-              minRating: 1,
+              initialRating: 1,
+              minRating: 0,
               direction: Axis.horizontal,
               allowHalfRating: false,
               itemCount: 5,
               itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
+              itemBuilder: (context, _) =>
+                  const Icon(Icons.star, color: Colors.amber),
               onRatingUpdate: (val) {
                 rating = val;
               },
@@ -292,16 +392,19 @@ class BookingsView extends StatelessWidget {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () {
               Get.back();
-              controller.submitReview(appointmentId, rating.toInt(), commentCtrl.text);
+              controller.submitReview(
+                appointmentId,
+                rating.toInt(),
+                commentCtrl.text,
+              );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryColor),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryColor,
+            ),
             child: const Text('Submit', style: TextStyle(color: Colors.white)),
           ),
         ],

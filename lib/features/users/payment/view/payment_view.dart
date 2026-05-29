@@ -1,14 +1,16 @@
 import 'widgets/mobile_payment.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../../../../core/classes/adaptive_layout.dart';
 import '../../../../core/theme/app_colors.dart';
-import 'package:get/get.dart';
+import '../controller/payment_controller.dart';
 
 class PaymentView extends StatelessWidget {
   const PaymentView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Get.put(PaymentController());
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(

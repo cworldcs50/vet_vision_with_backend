@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:equatable/equatable.dart';
 
 /// Matches Laravel's AnimalResource / Animal model response.
@@ -25,6 +27,7 @@ class AnimalModel extends Equatable {
   final String? imageUrl;
 
   factory AnimalModel.fromJson(Map<String, dynamic> json) {
+    log(json['image_url']);
     return AnimalModel(
       age: json['age'] ?? 0,
       name: json['name'] ?? '',
@@ -32,11 +35,12 @@ class AnimalModel extends Equatable {
       gender: json['gender'] ?? '',
       species: json['species'] ?? '',
       id: (json['id'] ?? 0).toString(),
+      //http://localhost/VetVision-API/VetVision-API/public/storage/animals/...
+      imageUrl: json['image_url'] != null
+          ? "http://10.0.2.2/VetVision-API/VetVision-API/storage/app/public/animals/${json['image_url'].toString().split("/").last}"
+          : null,
       weight: (json['weight'] ?? 0).toDouble(),
       ownerId: (json['owner_id'] ?? 0).toString(),
-      imageUrl: json['image_path'] != null
-          ? 'http://10.0.2.2/VetVision-API/VetVision-API/public/storage/${json['image_path']}'
-          : null,
     );
   }
 

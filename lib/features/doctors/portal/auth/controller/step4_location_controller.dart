@@ -87,6 +87,13 @@ class Step4LocationController extends GetxController {
       final prefs = Get.find<AppServices>().appSharedPrefs;
       final token = prefs.getString(CachingKeysConstants.kUserToken) ?? "";
 
+      try {
+        lat; long;
+      } catch (e) {
+        Get.snackbar("Error", "Please select your clinic location on the map.", snackPosition: SnackPosition.BOTTOM);
+        return;
+      }
+
       final profileData = {
         'latitude': lat,
         'longitude': long,

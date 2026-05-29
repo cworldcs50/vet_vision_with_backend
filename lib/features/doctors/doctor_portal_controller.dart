@@ -256,12 +256,14 @@ class DoctorPortalController extends GetxController {
         'start_time': startTime,
         'end_time': endTime,
       });
+      availabilities.refresh();
       update();
     }
   }
 
   void removeAvailability(int index) {
     availabilities.removeAt(index);
+    availabilities.refresh();
     update();
   }
 
@@ -280,9 +282,9 @@ class DoctorPortalController extends GetxController {
 
       // Build profile payload with both fee fields
       final profileData = {
-        'name': fullNameController.text,
         'email': emailController.text,
         'phone': phoneController.text,
+        'name': fullNameController.text,
         'specialization': specializationController.text.isEmpty
             ? 'General'
             : specializationController.text,
@@ -290,12 +292,14 @@ class DoctorPortalController extends GetxController {
         'license_number': licenseController.text,
         'bio': bioController.text,
         'consultation_fee_online':
-            double.tryParse(sessionCostOnlineController.text.trim()) ?? 0.0,
+            (double.tryParse(sessionCostOnlineController.text.trim()) ?? 0.0)
+                .toInt(),
         'consultation_fee_offline':
-            double.tryParse(sessionCostOfflineController.text.trim()) ?? 0.0,
+            (double.tryParse(sessionCostOfflineController.text.trim()) ?? 0.0)
+                .toInt(),
         'clinic_address': clinicAddressController.text,
-        'is_online': isOnlineConsultation.value ? 1 : 0,
-        'is_in_person': isInPersonConsultation.value ? 1 : 0,
+        'is_online_available': isOnlineConsultation.value ? 1 : 0,
+        'is_offline_available': isInPersonConsultation.value ? 1 : 0,
         'latitude': latitude.value,
         'longitude': longitude.value,
       };
@@ -316,8 +320,8 @@ class DoctorPortalController extends GetxController {
         Get.snackbar(
           "Success",
           "Profile updated successfully",
-          backgroundColor: Colors.green,
           colorText: Colors.white,
+          backgroundColor: Colors.green,
           snackPosition: SnackPosition.BOTTOM,
         );
       } else {

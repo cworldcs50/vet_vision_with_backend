@@ -186,7 +186,7 @@ class _PetCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final hasImage = pet.imageUrl != null && pet.imageUrl!.isNotEmpty;
+    final hasImage = pet.imageUrl != null && pet.imageUrl!.isNotEmpty;
 
     return Container(
       margin: EdgeInsets.only(
@@ -220,10 +220,8 @@ class _PetCard extends StatelessWidget {
                 AdaptiveLayout.getResponsiveFontSize(context, fontSize: 18),
               ),
             ),
-            child:
-                // hasImage
-                // ?
-                Image.network(
+            child: hasImage
+                ? Image.network(
                   pet.imageUrl!,
                   width: AdaptiveLayout.getResponsiveFontSize(
                     context,
@@ -238,8 +236,8 @@ class _PetCard extends StatelessWidget {
                     log(error.toString());
                     return _defaultAvatar(context);
                   },
-                ),
-            // : _defaultAvatar(context),
+                )
+            : _defaultAvatar(context),
           ),
 
           const SizedBox(width: 14),
