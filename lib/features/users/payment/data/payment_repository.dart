@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import '../../../../core/constants/link_api.dart';
 import '../../../../core/services/app_service.dart';
@@ -9,8 +11,9 @@ class PaymentRepository {
   PaymentRepository() {
     final token =
         Get.find<AppServices>().appSharedPrefs.getString(
-              'userToken', // CachingKeysConstants.kUserToken
-            ) ?? '';
+          'userToken', // CachingKeysConstants.kUserToken
+        ) ??
+        '';
 
     _dio = Dio(
       BaseOptions(
@@ -23,7 +26,13 @@ class PaymentRepository {
   }
 
   Future<Response> payForAppointment(String appointmentId) async {
-    return await _dio.post('${AppLink.server}/payments/$appointmentId/pay');
+    final result = await _dio.post(
+      '${AppLink.server}/payments/$appointmentId/pay',
+    );
+    log('PAYMENT ERROR status: ${result.statusCode}');
+    log('PAYMENT ERROR body: ${result.data}');
+
+    return result;
   }
 
   Future<Response> checkPaymentStatus(String appointmentId) async {

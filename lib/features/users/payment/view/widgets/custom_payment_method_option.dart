@@ -26,13 +26,19 @@ class CustomPaymentMethodOption extends StatelessWidget {
     return GestureDetector(
       onTap: () => onChanged(value),
       child: Container(
-        padding: EdgeInsets.all(AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16)),
+        padding: EdgeInsets.all(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12)),
+          borderRadius: BorderRadius.circular(
+            AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+          ),
           border: Border.all(
             color: isSelected ? const Color(0xFF009689) : Colors.grey.shade300,
-            width: isSelected ? 2 : 1,
+            width: isSelected
+                ? AdaptiveLayout.getResponsiveFontSize(context, fontSize: 2)
+                : AdaptiveLayout.getResponsiveFontSize(context, fontSize: 1),
           ),
         ),
         child: Row(
@@ -41,7 +47,12 @@ class CustomPaymentMethodOption extends StatelessWidget {
               icon,
               color: isSelected ? const Color(0xFF009689) : Colors.grey,
             ),
-            SizedBox(width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16)),
+            SizedBox(
+              width: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 16,
+              ),
+            ),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

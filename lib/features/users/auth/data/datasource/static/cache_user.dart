@@ -74,6 +74,19 @@ class CacheUser {
           );
     }
 
+    if (user.avatarUrl.isNotEmpty) {
+      // Build the full local server path from the filename
+      final filename = user.avatarUrl.split('/').last;
+      final fullAvatarUrl =
+          'http://10.0.2.2/VetVision-API/VetVision-API/storage/app/public/avatars/$filename';
+      result =
+          result &&
+          await sharedPrefs.setString(
+            CachingKeysConstants.kUserAvatarUrl,
+            fullAvatarUrl,
+          );
+    }
+
     if (result) {
       return const Right(true);
     } else {

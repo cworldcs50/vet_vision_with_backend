@@ -77,7 +77,9 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
               ),
               decoration: BoxDecoration(
                 color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(
+                  AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8),
+                ),
                 border: Border.all(color: Colors.grey.shade200),
               ),
               child: Center(
@@ -120,7 +122,9 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                 ),
                 decoration: BoxDecoration(
                   color: Colors.teal.shade50,
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: BorderRadius.circular(
+                    AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8),
+                  ),
                   border: Border.all(color: Colors.teal.shade100),
                 ),
                 child: Row(
@@ -215,7 +219,9 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
           ),
           decoration: BoxDecoration(
             color: AppColors.accent,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: BorderRadius.circular(
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8),
+            ),
             border: Border.all(color: Colors.grey.shade200),
           ),
           child: DropdownButtonHideUnderline(
@@ -261,7 +267,12 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                   ),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(
+                      AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 8,
+                      ),
+                    ),
                     border: Border.all(color: Colors.grey.shade200),
                   ),
                   child: Column(
@@ -316,7 +327,12 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
                   ),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(
+                      AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 8,
+                      ),
+                    ),
                     border: Border.all(color: Colors.grey.shade200),
                   ),
                   child: Column(
@@ -373,7 +389,9 @@ class _TimeSlotPickerState extends State<TimeSlotPicker> {
             ),
             decoration: BoxDecoration(
               color: const Color(0xFF009689),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(
+                AdaptiveLayout.getResponsiveFontSize(context, fontSize: 8),
+              ),
             ),
             child: Center(
               child: Text(

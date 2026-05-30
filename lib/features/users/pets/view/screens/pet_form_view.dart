@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../../core/classes/adaptive_layout.dart';
 import '../../../../../core/network/request_status.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../controller/my_pets_controller.dart';
@@ -16,7 +17,10 @@ class PetFormView extends GetView<MyPetsController> {
       appBar: AppBar(
         title: Text(
           isEditing ? 'Edit Pet' : 'Add New Pet',
-          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -26,11 +30,18 @@ class PetFormView extends GetView<MyPetsController> {
       body: Form(
         key: controller.formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(
+            AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+          ),
           children: [
             // ── Image picker ──────────────────────────────────────────
             _ImagePicker(),
-            const SizedBox(height: 20),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 20,
+              ),
+            ),
 
             // ── Card: Basic Info ──────────────────────────────────────
             _FormCard(
@@ -42,7 +53,8 @@ class PetFormView extends GetView<MyPetsController> {
                   label: 'Pet Name',
                   icon: Icons.pets,
                   hint: 'e.g. Fluffy',
-                  validator: (v) => v!.trim().isEmpty ? 'Name is required' : null,
+                  validator: (v) =>
+                      v!.trim().isEmpty ? 'Name is required' : null,
                 ),
                 const SizedBox(height: 14),
                 _buildField(
@@ -50,7 +62,8 @@ class PetFormView extends GetView<MyPetsController> {
                   label: 'Species',
                   icon: Icons.category_outlined,
                   hint: 'e.g. Dog, Cat, Bird',
-                  validator: (v) => v!.trim().isEmpty ? 'Species is required' : null,
+                  validator: (v) =>
+                      v!.trim().isEmpty ? 'Species is required' : null,
                 ),
                 const SizedBox(height: 14),
                 _buildField(
@@ -58,7 +71,8 @@ class PetFormView extends GetView<MyPetsController> {
                   label: 'Breed',
                   icon: Icons.blur_circular_outlined,
                   hint: 'e.g. Golden Retriever',
-                  validator: (v) => v!.trim().isEmpty ? 'Breed is required' : null,
+                  validator: (v) =>
+                      v!.trim().isEmpty ? 'Breed is required' : null,
                 ),
               ],
             ),
@@ -84,7 +98,9 @@ class PetFormView extends GetView<MyPetsController> {
                         keyboardType: TextInputType.number,
                         validator: (v) {
                           if (v!.trim().isEmpty) return 'Required';
-                          if (int.tryParse(v.trim()) == null) return 'Must be a number';
+                          if (int.tryParse(v.trim()) == null) {
+                            return 'Must be a number';
+                          }
                           return null;
                         },
                       ),
@@ -96,10 +112,14 @@ class PetFormView extends GetView<MyPetsController> {
                         label: 'Weight (kg)',
                         icon: Icons.monitor_weight_outlined,
                         hint: 'e.g. 5.5',
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         validator: (v) {
                           if (v!.trim().isEmpty) return 'Required';
-                          if (double.tryParse(v.trim()) == null) return 'Must be a number';
+                          if (double.tryParse(v.trim()) == null) {
+                            return 'Must be a number';
+                          }
                           return null;
                         },
                       ),
@@ -113,7 +133,8 @@ class PetFormView extends GetView<MyPetsController> {
 
             // ── Submit button ─────────────────────────────────────────
             Obx(() {
-              final loading = controller.formStatus.value == RequestStatus.loading;
+              final loading =
+                  controller.formStatus.value == RequestStatus.loading;
               return SizedBox(
                 width: double.infinity,
                 height: 52,
@@ -121,15 +142,22 @@ class PetFormView extends GetView<MyPetsController> {
                   onPressed: loading ? null : controller.submitForm,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primaryColor,
-                    disabledBackgroundColor: AppColors.primaryColor.withValues(alpha: 0.5),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                    disabledBackgroundColor: AppColors.primaryColor.withValues(
+                      alpha: 0.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
                     elevation: 0,
                   ),
                   child: loading
                       ? const SizedBox(
                           width: 22,
                           height: 22,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+                          child: CircularProgressIndicator(
+                            color: Colors.white,
+                            strokeWidth: 2.5,
+                          ),
                         )
                       : Text(
                           isEditing ? 'Save Changes' : 'Add Pet',
@@ -167,7 +195,10 @@ class PetFormView extends GetView<MyPetsController> {
         prefixIcon: Icon(icon, color: AppColors.primaryColor, size: 20),
         filled: true,
         fillColor: Colors.white,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: Colors.grey.shade200),
@@ -178,7 +209,10 @@ class PetFormView extends GetView<MyPetsController> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+          borderSide: const BorderSide(
+            color: AppColors.primaryColor,
+            width: 1.5,
+          ),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -197,90 +231,194 @@ class PetFormView extends GetView<MyPetsController> {
 class _ImagePicker extends GetView<MyPetsController> {
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<MyPetsController>(builder: (ctrl) {
-      final hasImage = ctrl.pickedImage != null;
-      final hasNetworkImage = ctrl.editingPet?.imageUrl != null &&
-          ctrl.editingPet!.imageUrl!.isNotEmpty;
+    return GetBuilder<MyPetsController>(
+      builder: (ctrl) {
+        final hasImage = ctrl.pickedImage != null;
+        final hasNetworkImage =
+            ctrl.editingPet?.imageUrl != null &&
+            ctrl.editingPet!.imageUrl!.isNotEmpty;
 
-      return GestureDetector(
-        onTap: ctrl.pickImage,
-        child: Container(
-          height: 150,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: AppColors.primaryColor.withValues(alpha: 0.3),
-              width: 1.5,
-              style: BorderStyle.solid,
+        return GestureDetector(
+          onTap: ctrl.pickImage,
+          child: Container(
+            height: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 150,
             ),
-          ),
-          child: hasImage
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.file(ctrl.pickedImage!, fit: BoxFit.cover, width: double.infinity),
-                )
-              : hasNetworkImage
-                  ? Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Image.network(
-                            ctrl.editingPet!.imageUrl!,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Center(
-                              child: Icon(Icons.pets,
-                                  color: AppColors.primaryColor, size: 40),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 8,
-                          right: 8,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: Colors.black54,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.edit, size: 12, color: Colors.white),
-                                SizedBox(width: 4),
-                                Text('Change', style: TextStyle(color: Colors.white, fontSize: 11)),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 52,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryColor.withValues(alpha: 0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.add_photo_alternate_outlined,
-                              size: 26, color: AppColors.primaryColor),
-                        ),
-                        const SizedBox(height: 10),
-                        const Text('Tap to add pet photo',
-                            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.black87)),
-                        const SizedBox(height: 4),
-                        Text('Optional – JPG or PNG',
-                            style: TextStyle(fontSize: 12, color: Colors.grey[500])),
-                      ],
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(
+                AdaptiveLayout.getResponsiveFontSize(context, fontSize: 18),
+              ),
+              border: Border.all(
+                color: AppColors.primaryColor.withValues(alpha: 0.3),
+                width: 1.5,
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: hasImage
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                      AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 16,
+                      ),
                     ),
-        ),
-      );
-    });
+                    child: Image.file(
+                      ctrl.pickedImage!,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                    ),
+                  )
+                : hasNetworkImage
+                ? Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 16,
+                          ),
+                        ),
+                        child: Image.network(
+                          ctrl.editingPet!.imageUrl!,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          errorBuilder: (context, error, stackTrace) => Center(
+                            child: Icon(
+                              Icons.pets,
+                              color: AppColors.primaryColor,
+                              size: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 40,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 8,
+                        ),
+                        right: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 8,
+                        ),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 10,
+                            ),
+                            vertical: AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 4,
+                            ),
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black54,
+                            borderRadius: BorderRadius.circular(
+                              AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 20,
+                              ),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.edit,
+                                size: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 12,
+                                ),
+                                color: Colors.white,
+                              ),
+                              SizedBox(
+                                width: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 4,
+                                ),
+                              ),
+                              Text(
+                                'Change',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize:
+                                      AdaptiveLayout.getResponsiveFontSize(
+                                        context,
+                                        fontSize: 11,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 52,
+                        ),
+                        height: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 52,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryColor.withValues(alpha: 0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.add_photo_alternate_outlined,
+                          size: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 26,
+                          ),
+                          color: AppColors.primaryColor,
+                        ),
+                      ),
+                      SizedBox(
+                        height: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 10,
+                        ),
+                      ),
+                      const Text(
+                        'Tap to add pet photo',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      SizedBox(
+                        height: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 4,
+                        ),
+                      ),
+                      Text(
+                        'Optional – JPG or PNG',
+                        style: TextStyle(
+                          fontSize: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 12,
+                          ),
+                          color: Colors.grey[500],
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -288,40 +426,73 @@ class _ImagePicker extends GetView<MyPetsController> {
 class _GenderSelector extends GetView<MyPetsController> {
   @override
   Widget build(BuildContext context) {
-    return GetBuilder<MyPetsController>(builder: (ctrl) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.wc_outlined, color: AppColors.primaryColor, size: 20),
-              const SizedBox(width: 8),
-              const Text('Gender', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            children: [
-              _GenderOption(
-                label: 'Male',
-                icon: Icons.male,
-                color: Colors.blue,
-                isSelected: ctrl.selectedGender == 'male',
-                onTap: () => ctrl.setGender('male'),
+    return GetBuilder<MyPetsController>(
+      builder: (ctrl) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.wc_outlined,
+                  color: AppColors.primaryColor,
+                  size: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 20,
+                  ),
+                ),
+                SizedBox(
+                  width: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 8,
+                  ),
+                ),
+                Text(
+                  'Gender',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 10,
               ),
-              const SizedBox(width: 12),
-              _GenderOption(
-                label: 'Female',
-                icon: Icons.female,
-                color: Colors.pink,
-                isSelected: ctrl.selectedGender == 'female',
-                onTap: () => ctrl.setGender('female'),
-              ),
-            ],
-          ),
-        ],
-      );
-    });
+            ),
+            Row(
+              children: [
+                _GenderOption(
+                  label: 'Male',
+                  icon: Icons.male,
+                  color: Colors.blue,
+                  isSelected: ctrl.selectedGender == 'male',
+                  onTap: () => ctrl.setGender('male'),
+                ),
+                SizedBox(
+                  width: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 12,
+                  ),
+                ),
+                _GenderOption(
+                  label: 'Female',
+                  icon: Icons.female,
+                  color: Colors.pink,
+                  isSelected: ctrl.selectedGender == 'female',
+                  onTap: () => ctrl.setGender('female'),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
   }
 }
 
@@ -346,10 +517,17 @@ class _GenderOption extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: EdgeInsets.symmetric(
+            vertical: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 12,
+            ),
+          ),
           decoration: BoxDecoration(
             color: isSelected ? color.withValues(alpha: 0.12) : Colors.white,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+            ),
             border: Border.all(
               color: isSelected ? color : Colors.grey.shade200,
               width: isSelected ? 1.5 : 1,
@@ -358,8 +536,20 @@ class _GenderOption extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, size: 18, color: isSelected ? color : Colors.grey),
-              const SizedBox(width: 6),
+              Icon(
+                icon,
+                size: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 18,
+                ),
+                color: isSelected ? color : Colors.grey,
+              ),
+              SizedBox(
+                width: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 6,
+                ),
+              ),
               Text(
                 label,
                 style: TextStyle(
@@ -377,7 +567,11 @@ class _GenderOption extends StatelessWidget {
 
 // ── Reusable card wrapper ──────────────────────────────────────────────────────
 class _FormCard extends StatelessWidget {
-  const _FormCard({required this.title, required this.icon, required this.children});
+  const _FormCard({
+    required this.title,
+    required this.icon,
+    required this.children,
+  });
   final String title;
   final IconData icon;
   final List<Widget> children;
@@ -387,28 +581,60 @@ class _FormCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 18),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            blurRadius: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 10,
+            ),
+            offset: Offset(
+              0,
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 3),
+            ),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(
+        AdaptiveLayout.getResponsiveFontSize(context, fontSize: 18),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: AppColors.primaryColor, size: 18),
-              const SizedBox(width: 8),
-              Text(title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+              Icon(
+                icon,
+                color: AppColors.primaryColor,
+                size: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(
+                width: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 8,
+                ),
+              ),
+              Text(
+                title,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
             ],
           ),
-          const Divider(height: 20),
+          Divider(
+            height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
+          ),
           ...children,
         ],
       ),

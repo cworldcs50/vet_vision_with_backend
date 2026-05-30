@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/classes/adaptive_layout.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../controller/cv_scan_controller.dart';
 
@@ -17,86 +18,147 @@ class CvScanView extends StatelessWidget {
         foregroundColor: Colors.white,
         centerTitle: true,
         elevation: 0,
-        title: const Column(
+        title: Column(
           children: [
-            Text('AI Disease Scan',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-            Text('Powered by Deep Learning',
-                style: TextStyle(fontSize: 10, color: Colors.white70)),
+            Text(
+              'AI Disease Scan',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            Text(
+              'Powered by Deep Learning',
+              style: TextStyle(
+                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 10,
+                ),
+                color: Colors.white70,
+              ),
+            ),
           ],
         ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Animal Type Selector ────────────────────────────────────────
-            const Text(
+            Text(
               'Select Animal Type',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 15,
+                ),
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1A1C1E),
               ),
             ),
-            const SizedBox(height: 12),
-            Obx(() => Row(
-                  children: [
-                    _AnimalTypeCard(
-                      emoji: '🐄',
-                      label: 'Cattle',
-                      sublabel: 'Lumpy Skin\nFoot-and-Mouth',
-                      type: AnimalType.cattle,
-                      isSelected:
-                          controller.selectedAnimalType.value == AnimalType.cattle,
-                      onTap: () => controller.selectAnimalType(AnimalType.cattle),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 12,
+              ),
+            ),
+            Obx(
+              () => Row(
+                children: [
+                  _AnimalTypeCard(
+                    emoji: '🐄',
+                    label: 'Cattle',
+                    sublabel: 'Lumpy Skin\nFoot-and-Mouth',
+                    type: AnimalType.cattle,
+                    isSelected:
+                        controller.selectedAnimalType.value ==
+                        AnimalType.cattle,
+                    onTap: () => controller.selectAnimalType(AnimalType.cattle),
+                  ),
+                  SizedBox(
+                    width: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 10,
                     ),
-                    const SizedBox(width: 10),
-                    _AnimalTypeCard(
-                      emoji: '🐈',
-                      label: 'Cat',
-                      sublabel: 'Ringworm\nScabies',
-                      type: AnimalType.cat,
-                      isSelected:
-                          controller.selectedAnimalType.value == AnimalType.cat,
-                      onTap: () => controller.selectAnimalType(AnimalType.cat),
+                  ),
+                  _AnimalTypeCard(
+                    emoji: '🐈',
+                    label: 'Cat',
+                    sublabel: 'Ringworm\nScabies',
+                    type: AnimalType.cat,
+                    isSelected:
+                        controller.selectedAnimalType.value == AnimalType.cat,
+                    onTap: () => controller.selectAnimalType(AnimalType.cat),
+                  ),
+                  SizedBox(
+                    width: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 10,
                     ),
-                    const SizedBox(width: 10),
-                    _AnimalTypeCard(
-                      emoji: '🐔',
-                      label: 'Chicken',
-                      sublabel: 'Newcastle\nCoccidiosis',
-                      type: AnimalType.chicken,
-                      isSelected:
-                          controller.selectedAnimalType.value == AnimalType.chicken,
-                      onTap: () => controller.selectAnimalType(AnimalType.chicken),
-                    ),
-                  ],
-                )),
-
-            const SizedBox(height: 24),
+                  ),
+                  _AnimalTypeCard(
+                    emoji: '🐔',
+                    label: 'Chicken',
+                    sublabel: 'Newcastle\nCoccidiosis',
+                    type: AnimalType.chicken,
+                    isSelected:
+                        controller.selectedAnimalType.value ==
+                        AnimalType.chicken,
+                    onTap: () =>
+                        controller.selectAnimalType(AnimalType.chicken),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(
+              width: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 24,
+              ),
+            ),
 
             // ── Image Upload Area ───────────────────────────────────────────
-            const Text(
+            Text(
               'Upload Animal Image',
               style: TextStyle(
-                fontSize: 15,
+                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 15,
+                ),
                 fontWeight: FontWeight.bold,
                 color: Color(0xFF1A1C1E),
               ),
             ),
-            const SizedBox(height: 12),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 12,
+              ),
+            ),
             Obx(() {
               final img = controller.pickedImage.value;
               return GestureDetector(
                 onTap: _showImageSourceDialog(context, controller),
                 child: Container(
                   width: double.infinity,
-                  height: 220,
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 220,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
+                    borderRadius: BorderRadius.circular(
+                      AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 18,
+                      ),
+                    ),
                     border: Border.all(
                       color: img != null
                           ? AppColors.primary
@@ -107,8 +169,17 @@ class CvScanView extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.04),
-                        blurRadius: 10,
-                        offset: const Offset(0, 3),
+                        blurRadius: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 10,
+                        ),
+                        offset: Offset(
+                          0,
+                          AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 3,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -116,32 +187,83 @@ class CvScanView extends StatelessWidget {
                       ? Stack(
                           children: [
                             ClipRRect(
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(
+                                AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 16,
+                                ),
+                              ),
                               child: Image.file(
                                 img,
                                 width: double.infinity,
-                                height: 220,
+                                height: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 220,
+                                ),
                                 fit: BoxFit.cover,
                               ),
                             ),
                             Positioned(
-                              bottom: 10,
-                              right: 10,
+                              bottom: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 10,
+                              ),
+                              right: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 10,
+                              ),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 12, vertical: 6),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      AdaptiveLayout.getResponsiveFontSize(
+                                        context,
+                                        fontSize: 12,
+                                      ),
+                                  vertical:
+                                      AdaptiveLayout.getResponsiveFontSize(
+                                        context,
+                                        fontSize: 6,
+                                      ),
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.black54,
-                                  borderRadius: BorderRadius.circular(20),
+                                  borderRadius: BorderRadius.circular(
+                                    AdaptiveLayout.getResponsiveFontSize(
+                                      context,
+                                      fontSize: 20,
+                                    ),
+                                  ),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.edit, size: 14, color: Colors.white),
-                                    SizedBox(width: 4),
-                                    Text('Change',
-                                        style: TextStyle(
-                                            color: Colors.white, fontSize: 12)),
+                                    Icon(
+                                      Icons.edit,
+                                      size:
+                                          AdaptiveLayout.getResponsiveFontSize(
+                                            context,
+                                            fontSize: 14,
+                                          ),
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      width:
+                                          AdaptiveLayout.getResponsiveFontSize(
+                                            context,
+                                            fontSize: 4,
+                                          ),
+                                    ),
+                                    Text(
+                                      'Change',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize:
+                                            AdaptiveLayout.getResponsiveFontSize(
+                                              context,
+                                              fontSize: 12,
+                                            ),
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -152,30 +274,58 @@ class CvScanView extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Container(
-                              width: 64,
-                              height: 64,
+                              width: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 64,
+                              ),
+                              height: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 64,
+                              ),
                               decoration: BoxDecoration(
-                                color:
-                                    AppColors.primary.withValues(alpha: 0.1),
+                                color: AppColors.primary.withValues(alpha: 0.1),
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.add_photo_alternate_outlined,
                                 color: AppColors.primary,
-                                size: 32,
+                                size: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 32,
+                                ),
                               ),
                             ),
-                            const SizedBox(height: 12),
-                            const Text(
+                            SizedBox(
+                              height: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
                               'Tap to upload image',
                               style: TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 15),
+                                fontWeight: FontWeight.w600,
+                                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 15,
+                                ),
+                              ),
                             ),
-                            const SizedBox(height: 4),
+                            SizedBox(
+                              height: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 4,
+                              ),
+                            ),
                             Text(
                               'Take a clear photo of the affected area',
                               style: TextStyle(
-                                  color: Colors.grey[500], fontSize: 12),
+                                color: Colors.grey[500],
+                                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -183,7 +333,12 @@ class CvScanView extends StatelessWidget {
               );
             }),
 
-            const SizedBox(height: 20),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 20,
+              ),
+            ),
 
             // ── Scan Button ─────────────────────────────────────────────────
             Obx(() {
@@ -191,53 +346,104 @@ class CvScanView extends StatelessWidget {
                   controller.scanStatus.value == ScanStatus.loading;
               return SizedBox(
                 width: double.infinity,
-                height: 54,
+                height: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 54,
+                ),
                 child: ElevatedButton(
                   onPressed: isLoading ? null : controller.runScan,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
-                    disabledBackgroundColor:
-                        AppColors.primary.withValues(alpha: 0.5),
+                    disabledBackgroundColor: AppColors.primary.withValues(
+                      alpha: 0.5,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16)),
+                      borderRadius: BorderRadius.circular(
+                        AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
                     elevation: 3,
                   ),
                   child: isLoading
-                      ? const Row(
+                      ? Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             SizedBox(
-                              width: 20,
-                              height: 20,
+                              width: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 20,
+                              ),
+                              height: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 20,
+                              ),
                               child: CircularProgressIndicator(
-                                  color: Colors.white, strokeWidth: 2.5),
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
                             ),
-                            SizedBox(width: 12),
-                            Text('Analyzing...',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold)),
+                            SizedBox(
+                              width: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              'Analyzing...',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 15,
+                                ),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         )
-                      : const Row(
+                      : Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.biotech_outlined,
-                                color: Colors.white, size: 22),
-                            SizedBox(width: 10),
-                            Text('Scan Now',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold)),
+                            Icon(
+                              Icons.biotech_outlined,
+                              color: Colors.white,
+                              size: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 22,
+                              ),
+                            ),
+                            SizedBox(
+                              width: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 10,
+                              ),
+                            ),
+                            Text(
+                              'Scan Now',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                                  context,
+                                  fontSize: 15,
+                                ),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                 ),
               );
             }),
 
-            const SizedBox(height: 24),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 24,
+              ),
+            ),
 
             // ── Result Card ─────────────────────────────────────────────────
             Obx(() {
@@ -253,60 +459,103 @@ class CvScanView extends StatelessWidget {
   }
 
   VoidCallback _showImageSourceDialog(
-      BuildContext context, CvScanController controller) {
+    BuildContext context,
+    CvScanController controller,
+  ) {
     return () => showModalBottomSheet(
-          context: context,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(
+            AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
           ),
-          builder: (_) => Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+        ),
+      ),
+      builder: (_) => Padding(
+        padding: EdgeInsets.all(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 40,
+              ),
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 4,
+              ),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(
+                  AdaptiveLayout.getResponsiveFontSize(context, fontSize: 2),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 16,
+              ),
+            ),
+            Text(
+              'Select Image Source',
+              style: TextStyle(
+                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 16,
+                ),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 20,
+              ),
+            ),
+            Row(
               children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[300],
-                    borderRadius: BorderRadius.circular(2),
+                Expanded(
+                  child: _SourceOption(
+                    icon: Icons.photo_library_outlined,
+                    label: 'Gallery',
+                    onTap: () {
+                      Get.back();
+                      controller.pickImage();
+                    },
                   ),
                 ),
-                const SizedBox(height: 16),
-                const Text('Select Image Source',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 20),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _SourceOption(
-                        icon: Icons.photo_library_outlined,
-                        label: 'Gallery',
-                        onTap: () {
-                          Get.back();
-                          controller.pickImage();
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _SourceOption(
-                        icon: Icons.camera_alt_outlined,
-                        label: 'Camera',
-                        onTap: () {
-                          Get.back();
-                          controller.pickImageFromCamera();
-                        },
-                      ),
-                    ),
-                  ],
+                SizedBox(
+                  width: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 12,
+                  ),
                 ),
-                const SizedBox(height: 12),
+                Expanded(
+                  child: _SourceOption(
+                    icon: Icons.camera_alt_outlined,
+                    label: 'Camera',
+                    onTap: () {
+                      Get.back();
+                      controller.pickImageFromCamera();
+                    },
+                  ),
+                ),
               ],
             ),
-          ),
-        );
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
@@ -335,47 +584,87 @@ class _AnimalTypeCard extends StatelessWidget {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
+          padding: EdgeInsets.symmetric(
+            vertical: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 14,
+            ),
+            horizontal: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 8,
+            ),
+          ),
           decoration: BoxDecoration(
             color: isSelected ? AppColors.primary : Colors.white,
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+            ),
             border: Border.all(
-              color: isSelected
-                  ? AppColors.primary
-                  : Colors.grey.shade200,
+              color: isSelected ? AppColors.primary : Colors.grey.shade200,
               width: isSelected ? 2 : 1,
             ),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
                       color: AppColors.primary.withValues(alpha: 0.3),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
+                      blurRadius: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 10,
+                      ),
+                      offset: Offset(
+                        0,
+                        AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 4,
+                        ),
+                      ),
                     ),
                   ]
                 : [],
           ),
           child: Column(
             children: [
-              Text(emoji, style: const TextStyle(fontSize: 28)),
-              const SizedBox(height: 6),
+              Text(
+                emoji,
+                style: TextStyle(
+                  fontSize: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 28,
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 6,
+                ),
+              ),
               Text(
                 label,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 13,
+                  fontSize: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 13,
+                  ),
                   color: isSelected ? Colors.white : Colors.black87,
                 ),
               ),
-              const SizedBox(height: 3),
+              SizedBox(
+                height: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 3,
+                ),
+              ),
               Text(
                 sublabel,
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 9,
-                  color: isSelected
-                      ? Colors.white70
-                      : Colors.grey[500],
+                  fontSize: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 9,
+                  ),
+                  color: isSelected ? Colors.white70 : Colors.grey[500],
                 ),
               ),
             ],
@@ -408,16 +697,26 @@ class _ResultCard extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
+      padding: EdgeInsets.all(
+        AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
+        ),
         border: Border.all(color: color.withValues(alpha: 0.3)),
         boxShadow: [
           BoxShadow(
             color: color.withValues(alpha: 0.12),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
+            blurRadius: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 16,
+            ),
+            offset: Offset(
+              0,
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 6),
+            ),
           ),
         ],
       ),
@@ -427,29 +726,50 @@ class _ResultCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: EdgeInsets.all(
+                  AdaptiveLayout.getResponsiveFontSize(context, fontSize: 10),
+                ),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.biotech, color: color, size: 24),
+                child: Icon(
+                  Icons.biotech,
+                  color: color,
+                  size: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 24,
+                  ),
+                ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(
+                width: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 12,
+                ),
+              ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Diagnosis Result',
                       style: TextStyle(
+                        fontSize: AdaptiveLayout.getResponsiveFontSize(
+                          context,
                           fontSize: 12,
-                          color: Colors.grey,
-                          fontWeight: FontWeight.w500),
+                        ),
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     Text(
                       label,
                       style: TextStyle(
-                        fontSize: 17,
+                        fontSize: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 17,
+                        ),
                         fontWeight: FontWeight.bold,
                         color: color,
                       ),
@@ -458,37 +778,71 @@ class _ResultCard extends StatelessWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: EdgeInsets.symmetric(
+                  horizontal: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 10,
+                  ),
+                  vertical: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 5,
+                  ),
+                ),
                 decoration: BoxDecoration(
                   color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(
+                    AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
+                  ),
                 ),
                 child: Text(
                   '${(confidence * 100).toStringAsFixed(1)}%',
                   style: TextStyle(
                     color: color,
                     fontWeight: FontWeight.bold,
-                    fontSize: 13,
+                    fontSize: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
               ),
             ],
           ),
 
-          const SizedBox(height: 16),
+          SizedBox(
+            height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+          ),
 
           // Confidence bar
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Confidence',
-                  style: TextStyle(fontSize: 12, color: Colors.grey)),
-              const SizedBox(height: 6),
+              Text(
+                'Confidence',
+                style: TextStyle(
+                  fontSize: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 12,
+                  ),
+                  color: Colors.grey,
+                ),
+              ),
+              SizedBox(
+                height: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 6,
+                ),
+              ),
               ClipRRect(
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(
+                  AdaptiveLayout.getResponsiveFontSize(context, fontSize: 4),
+                ),
                 child: LinearProgressIndicator(
                   value: confidence,
-                  minHeight: 8,
+                  minHeight: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 8,
+                  ),
                   backgroundColor: Colors.grey.shade200,
                   valueColor: AlwaysStoppedAnimation<Color>(color),
                 ),
@@ -496,7 +850,9 @@ class _ResultCard extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 20),
+          SizedBox(
+            height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
+          ),
 
           // Ask فيتو button
           SizedBox(
@@ -506,10 +862,26 @@ class _ResultCard extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 side: const BorderSide(color: AppColors.primary),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
-                padding: const EdgeInsets.symmetric(vertical: 12),
+                  borderRadius: BorderRadius.circular(
+                    AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+                  ),
+                ),
+                padding: EdgeInsets.symmetric(
+                  vertical: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 12,
+                  ),
+                ),
               ),
-              icon: const Text('🐾', style: TextStyle(fontSize: 18)),
+              icon: Text(
+                '🐾',
+                style: TextStyle(
+                  fontSize: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
               label: const Text(
                 'Ask فيتو about this',
                 style: TextStyle(
@@ -542,18 +914,35 @@ class _SourceOption extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16),
+        padding: EdgeInsets.symmetric(
+          vertical: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+        ),
         decoration: BoxDecoration(
           color: AppColors.primaryLight,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(
+            AdaptiveLayout.getResponsiveFontSize(context, fontSize: 14),
+          ),
         ),
         child: Column(
           children: [
-            Icon(icon, color: AppColors.primary, size: 28),
-            const SizedBox(height: 6),
-            Text(label,
-                style: const TextStyle(
-                    color: AppColors.primary, fontWeight: FontWeight.w600)),
+            Icon(
+              icon,
+              color: AppColors.primary,
+              size: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 28),
+            ),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 6,
+              ),
+            ),
+            Text(
+              label,
+              style: const TextStyle(
+                color: AppColors.primary,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
       ),

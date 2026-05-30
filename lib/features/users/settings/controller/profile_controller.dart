@@ -1,15 +1,15 @@
-import 'dart:developer';
 import 'dart:io';
-import 'package:flutter/material.dart';
+import 'dart:developer';
 import 'package:get/get.dart';
-import 'package:image_picker/image_picker.dart';
-import '../../../../core/constants/caching_keys_constants.dart';
-import '../../../../core/constants/link_api.dart';
-import '../../../../core/network/request_status.dart';
-import '../../../../core/routes/app_routes_name.dart';
-import '../../../../core/services/app_service.dart';
-import '../../../../core/services/authentication_service.dart';
+import 'package:flutter/material.dart';
 import '../data/profile_repository.dart';
+import 'package:image_picker/image_picker.dart';
+import '../../../../core/constants/link_api.dart';
+import '../../../../core/services/app_service.dart';
+import '../../../../core/routes/app_routes_name.dart';
+import '../../../../core/network/request_status.dart';
+import '../../../../core/services/authentication_service.dart';
+import '../../../../core/constants/caching_keys_constants.dart';
 
 class ProfileController extends GetxController {
   final _sharedPrefs = Get.find<AppServices>().appSharedPrefs;
@@ -23,10 +23,20 @@ class ProfileController extends GetxController {
   String role = '';
   String avatarUrl = '';
 
+  String phone = '';
+  String address = '';
+  String dob = '';
+
   // Edit Profile Form State
   final formKey = GlobalKey<FormState>();
   late TextEditingController nameCtrl;
   late TextEditingController emailCtrl;
+  late TextEditingController phoneCtrl;
+  late TextEditingController addressCtrl;
+  late TextEditingController dobCtrl;
+  late TextEditingController oldPasswordCtrl;
+  late TextEditingController newPasswordCtrl;
+  late TextEditingController confirmPasswordCtrl;
   File? pickedImage;
   bool _isPickerOpen = false;
   var updateStatus = RequestStatus.noData.obs;
@@ -36,6 +46,12 @@ class ProfileController extends GetxController {
     super.onInit();
     nameCtrl = TextEditingController();
     emailCtrl = TextEditingController();
+    phoneCtrl = TextEditingController();
+    addressCtrl = TextEditingController();
+    dobCtrl = TextEditingController();
+    oldPasswordCtrl = TextEditingController();
+    newPasswordCtrl = TextEditingController();
+    confirmPasswordCtrl = TextEditingController();
     loadCachedUser();
   }
 
@@ -44,13 +60,23 @@ class ProfileController extends GetxController {
         _sharedPrefs.getString(CachingKeysConstants.kUserFullName) ?? 'User';
     email = _sharedPrefs.getString(CachingKeysConstants.kUserEmail) ?? '';
     role = _sharedPrefs.getString(CachingKeysConstants.kUserRole) ?? 'user';
-    avatarUrl = _sharedPrefs.getString(CachingKeysConstants.kUserAvatarUrl) ?? '';
+    avatarUrl =
+        _sharedPrefs.getString(CachingKeysConstants.kUserAvatarUrl) ?? '';
+    phone = _sharedPrefs.getString(CachingKeysConstants.kUserPhone) ?? '';
+    address = _sharedPrefs.getString('userAddress') ?? '';
+    dob = _sharedPrefs.getString('userDob') ?? '';
     update();
   }
 
   void openEditProfile() {
     nameCtrl.text = fullName;
     emailCtrl.text = email;
+    phoneCtrl.text = phone;
+    addressCtrl.text = address;
+    dobCtrl.text = dob;
+    oldPasswordCtrl.clear();
+    newPasswordCtrl.clear();
+    confirmPasswordCtrl.clear();
     pickedImage = null;
     updateStatus.value = RequestStatus.noData;
     update();
@@ -82,10 +108,25 @@ class ProfileController extends GetxController {
     updateStatus.value = RequestStatus.loading;
 
     try {
-      final fields = {
+      final fields = <String, dynamic>{
         'name': nameCtrl.text.trim(),
         'email': emailCtrl.text.trim(),
       };
+
+      if (phoneCtrl.text.trim().isNotEmpty) {
+        fields['phone'] = phoneCtrl.text.trim();
+      }
+      if (addressCtrl.text.trim().isNotEmpty) {
+        fields['address'] = addressCtrl.text.trim();
+      }
+      if (dobCtrl.text.trim().isNotEmpty) {
+        fields['date_of_birth'] = dobCtrl.text.trim();
+      }
+      if (oldPasswordCtrl.text.isNotEmpty && newPasswordCtrl.text.isNotEmpty) {
+        fields['old_password'] = oldPasswordCtrl.text;
+        fields['password'] = newPasswordCtrl.text;
+        fields['password_confirmation'] = confirmPasswordCtrl.text;
+      }
 
       final response = await _repo.updateProfile(
         fields: fields,
@@ -95,22 +136,45 @@ class ProfileController extends GetxController {
       if (response.statusCode == 200 || response.statusCode == 201) {
         final data = response.data['data'];
         final user = data['user'];
-        final newAvatarUrl = data['avatar_url'] ?? '';
 
-        // Update local cache
-        await _sharedPrefs.setString(CachingKeysConstants.kUserFullName, user['name']);
-        await _sharedPrefs.setString(CachingKeysConstants.kUserEmail, user['email']);
-        await _sharedPrefs.setString(CachingKeysConstants.kUserAvatarUrl, newAvatarUrl);
-        
+        // Build full avatar URL safely – response may omit it if no new image was uploaded
+        final rawAvatarUrl = data['avatar_url']?.toString() ?? '';
+        if (rawAvatarUrl.isNotEmpty) {
+          final filename = rawAvatarUrl.split('/').last;
+          final fullAvatarUrl =
+              'http://10.0.2.2/VetVision-API/VetVision-API/storage/app/public/avatars/$filename';
+          await _sharedPrefs.setString(
+            CachingKeysConstants.kUserAvatarUrl,
+            fullAvatarUrl,
+          );
+        }
+
+        // Update local cache with returned user data
+        if (user['name'] != null) {
+          await _sharedPrefs.setString(CachingKeysConstants.kUserFullName, user['name']);
+        }
+        if (user['email'] != null) {
+          await _sharedPrefs.setString(CachingKeysConstants.kUserEmail, user['email']);
+        }
+        if (user['phone'] != null) {
+          await _sharedPrefs.setString(CachingKeysConstants.kUserPhone, user['phone']);
+        }
+        if (user['address'] != null) {
+          await _sharedPrefs.setString('userAddress', user['address']);
+        }
+        if (user['date_of_birth'] != null) {
+          await _sharedPrefs.setString('userDob', user['date_of_birth']);
+        }
+
         loadCachedUser();
         updateStatus.value = RequestStatus.success;
         Get.back(); // close form
         Get.snackbar(
           'Success',
           'Profile updated successfully',
-          backgroundColor: const Color(0xFF009689),
           colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: const Color(0xFF009689),
         );
       } else {
         updateStatus.value = RequestStatus.failure;
@@ -148,6 +212,12 @@ class ProfileController extends GetxController {
   void onClose() {
     nameCtrl.dispose();
     emailCtrl.dispose();
+    phoneCtrl.dispose();
+    addressCtrl.dispose();
+    dobCtrl.dispose();
+    oldPasswordCtrl.dispose();
+    newPasswordCtrl.dispose();
+    confirmPasswordCtrl.dispose();
     super.onClose();
   }
 }

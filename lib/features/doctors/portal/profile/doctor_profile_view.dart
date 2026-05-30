@@ -96,7 +96,10 @@ class DoctorProfileView extends GetView<DoctorPortalController> {
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.accent.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 8,
+                ),),
                     border: Border.all(color: AppColors.accent),
                   ),
                   child: Row(

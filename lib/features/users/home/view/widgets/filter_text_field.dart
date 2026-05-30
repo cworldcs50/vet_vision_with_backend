@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../../core/classes/adaptive_layout.dart';
+
 class FilterTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hint;
@@ -22,16 +24,29 @@ class FilterTextField extends StatelessWidget {
       decoration: InputDecoration(
         hintText: hint,
         prefixText: prefixText,
-        prefixIcon: icon != null ? Icon(icon, size: 20) : null,
+        prefixIcon: icon != null
+            ? Icon(
+                icon,
+                size: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 20,
+                ),
+              )
+            : null,
         filled: true,
         fillColor: Colors.grey.shade100,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(
+            AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+          ),
           borderSide: BorderSide.none,
         ),
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 15,
-          vertical: 15,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: AdaptiveLayout.getResponsiveFontSize(
+            context,
+            fontSize: 15,
+          ),
+          vertical: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 15),
         ),
       ),
     );

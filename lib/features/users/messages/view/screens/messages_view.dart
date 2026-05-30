@@ -70,90 +70,96 @@ class MessagesView extends GetView<MessagesController> {
               child: ListView.separated(
                 physics: const AlwaysScrollableScrollPhysics(),
                 itemCount: 4,
-              separatorBuilder: (context, index) => Divider(
-                height: AdaptiveLayout.getResponsiveFontSize(
-                  context,
-                  fontSize: 1,
+                separatorBuilder: (context, index) => Divider(
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 1,
+                  ),
+                  color: Colors.grey[200],
                 ),
-                color: Colors.grey[200],
-              ),
-              itemBuilder: (context, index) {
-                return ListTile(
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: AdaptiveLayout.getResponsiveFontSize(
-                      context,
-                      fontSize: 16,
-                    ),
-                    vertical: AdaptiveLayout.getResponsiveFontSize(
-                      context,
-                      fontSize: 8,
-                    ),
-                  ),
-                  leading: Stack(
-                    children: [
-                      CircleAvatar(
-                        radius: AdaptiveLayout.getResponsiveFontSize(
-                          context,
-                          fontSize: 24,
-                        ),
-                        backgroundColor: AppColors.primaryColor.withValues(
-                          alpha: 0.1,
-                        ),
-                        child: Icon(
-                          Icons.person,
-                          color: AppColors.primaryColor,
-                          size: AdaptiveLayout.getResponsiveFontSize(
-                            context,
-                            fontSize: 28,
-                          ),
-                        ),
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 16,
                       ),
-                      if (index == 0) // Unread dot mock
-                        Positioned(
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            width: AdaptiveLayout.getResponsiveFontSize(
+                      vertical: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 8,
+                      ),
+                    ),
+                    leading: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 24,
+                          ),
+                          backgroundColor: AppColors.primaryColor.withValues(
+                            alpha: 0.1,
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            color: AppColors.primaryColor,
+                            size: AdaptiveLayout.getResponsiveFontSize(
                               context,
-                              fontSize: 12,
-                            ),
-                            height: AdaptiveLayout.getResponsiveFontSize(
-                              context,
-                              fontSize: 12,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.red,
-                              shape: BoxShape.circle,
-                              border: Border.all(color: Colors.white, width: 2),
+                              fontSize: 28,
                             ),
                           ),
                         ),
-                    ],
-                  ),
-                  title: Text(
-                    "Dr. Doctor Name ${index + 1}",
-                    style: TextStyle(
-                      fontWeight: index == 0
-                          ? FontWeight.bold
-                          : FontWeight.w500,
+                        if (index == 0) // Unread dot mock
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Container(
+                              width: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 12,
+                              ),
+                              height: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 12,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: AdaptiveLayout.getResponsiveFontSize(
+                                    context,
+                                    fontSize: 2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                  ),
-                  subtitle: Text(
-                    "Thanks for scheduling the appointment!",
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: index == 0 ? Colors.black87 : Colors.grey[600],
+                    title: Text(
+                      "Dr. Doctor Name ${index + 1}",
+                      style: TextStyle(
+                        fontWeight: index == 0
+                            ? FontWeight.bold
+                            : FontWeight.w500,
+                      ),
                     ),
-                  ),
-                  trailing: Text(
-                    "10:4$index AM",
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                  ),
-                  onTap: () {},
-                );
-              },
-            ),
+                    subtitle: Text(
+                      "Thanks for scheduling the appointment!",
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: index == 0 ? Colors.black87 : Colors.grey[600],
+                      ),
+                    ),
+                    trailing: Text(
+                      "10:4$index AM",
+                      style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                    ),
+                    onTap: () {},
+                  );
+                },
+              ),
             ),
           ),
         ],

@@ -25,11 +25,18 @@ class EditProfileView extends GetView<ProfileController> {
       body: Form(
         key: controller.formKey,
         child: ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(
+            AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+          ),
           children: [
             // ── Image picker ──────────────────────────────────────────
             _ProfileImagePicker(),
-            const SizedBox(height: 20),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 20,
+              ),
+            ),
 
             // ── Card: Basic Info ──────────────────────────────────────
             _FormCard(
@@ -61,6 +68,102 @@ class EditProfileView extends GetView<ProfileController> {
                     if (v!.trim().isEmpty) return 'Email is required';
                     if (!GetUtils.isEmail(v.trim())) {
                       return 'Enter a valid email';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 14,
+                  ),
+                ),
+                CustomUserEditProfileTextFormField(
+                  controller: controller.phoneCtrl,
+                  label: 'Phone Number',
+                  icon: Icons.phone,
+                  hint: 'Enter your phone number',
+                  keyboardType: TextInputType.phone,
+                  validator: (v) => null,
+                ),
+                SizedBox(
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 14,
+                  ),
+                ),
+                CustomUserEditProfileTextFormField(
+                  controller: controller.addressCtrl,
+                  label: 'Address',
+                  icon: Icons.location_on_outlined,
+                  hint: 'Enter your address',
+                  validator: (v) => null,
+                ),
+                SizedBox(
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 14,
+                  ),
+                ),
+                CustomUserEditProfileTextFormField(
+                  controller: controller.dobCtrl,
+                  label: 'Date of Birth',
+                  icon: Icons.calendar_today,
+                  hint: 'YYYY-MM-DD',
+                  validator: (v) => null,
+                ),
+              ],
+            ),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 20,
+              ),
+            ),
+
+            // ── Card: Change Password ─────────────────────────────────
+            _FormCard(
+              title: 'Change Password (Optional)',
+              icon: Icons.lock_outline,
+              children: [
+                CustomUserEditProfileTextFormField(
+                  controller: controller.oldPasswordCtrl,
+                  label: 'Current Password',
+                  icon: Icons.lock,
+                  hint: 'Enter current password',
+                  obscureText: true,
+                  validator: (v) => null,
+                ),
+                SizedBox(
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 14,
+                  ),
+                ),
+                CustomUserEditProfileTextFormField(
+                  controller: controller.newPasswordCtrl,
+                  label: 'New Password',
+                  icon: Icons.lock_reset,
+                  hint: 'Enter new password',
+                  obscureText: true,
+                  validator: (v) => null,
+                ),
+                SizedBox(
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 14,
+                  ),
+                ),
+                CustomUserEditProfileTextFormField(
+                  obscureText: true,
+                  label: 'Confirm Password',
+                  hint: 'Confirm new password',
+                  icon: Icons.check_circle_outline,
+                  controller: controller.confirmPasswordCtrl,
+                  validator: (v) {
+                    if (controller.newPasswordCtrl.text.isNotEmpty &&
+                        v != controller.newPasswordCtrl.text) {
+                      return 'Passwords do not match';
                     }
                     return null;
                   },
@@ -152,11 +255,13 @@ class CustomUserEditProfileTextFormField extends StatelessWidget {
     required this.hint,
     required this.icon,
     this.isEnabled = true,
+    this.obscureText = false,
     this.keyboardType = TextInputType.text,
     required this.validator,
   });
 
   final bool isEnabled;
+  final bool obscureText;
   final IconData icon;
   final String label, hint;
   final TextInputType keyboardType;
@@ -170,6 +275,7 @@ class CustomUserEditProfileTextFormField extends StatelessWidget {
       keyboardType: keyboardType,
       validator: validator,
       enabled: isEnabled,
+      obscureText: obscureText,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
@@ -240,20 +346,34 @@ class _ProfileImagePicker extends GetView<ProfileController> {
             child: Stack(
               children: [
                 Container(
-                  width: 110,
-                  height: 110,
+                  width: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 110,
+                  ),
+                  height: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 110,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     shape: BoxShape.circle,
                     border: Border.all(
                       color: AppColors.primaryColor.withValues(alpha: 0.3),
-                      width: 2,
+                      width: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 2,
+                      ),
                       style: BorderStyle.solid,
                     ),
                   ),
                   child: hasLocalImage
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(55),
+                          borderRadius: BorderRadius.circular(
+                            AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 55,
+                            ),
+                          ),
                           child: Image.file(
                             ctrl.pickedImage!,
                             fit: BoxFit.cover,
@@ -261,21 +381,31 @@ class _ProfileImagePicker extends GetView<ProfileController> {
                         )
                       : hasNetworkImage
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(55),
+                          borderRadius: BorderRadius.circular(
+                            AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 55,
+                            ),
+                          ),
                           child: Image.network(
                             ctrl.avatarUrl,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(
-                                  Icons.person,
-                                  size: 50,
-                                  color: AppColors.primaryColor,
-                                ),
+                            errorBuilder: (context, error, stackTrace) => Icon(
+                              Icons.person,
+                              size: AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 50,
+                              ),
+                              color: AppColors.primaryColor,
+                            ),
                           ),
                         )
-                      : const Icon(
+                      : Icon(
                           Icons.person,
-                          size: 50,
+                          size: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 50,
+                          ),
                           color: AppColors.primaryColor,
                         ),
                 ),
@@ -283,14 +413,22 @@ class _ProfileImagePicker extends GetView<ProfileController> {
                   bottom: 0,
                   right: 0,
                   child: Container(
-                    padding: const EdgeInsets.all(6),
+                    padding: EdgeInsets.all(
+                      AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 6,
+                      ),
+                    ),
                     decoration: const BoxDecoration(
                       color: AppColors.primaryColor,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.camera_alt,
-                      size: 16,
+                      size: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 16,
+                      ),
                       color: Colors.white,
                     ),
                   ),
@@ -320,33 +458,60 @@ class _FormCard extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 18),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            blurRadius: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 10,
+            ),
+            offset: Offset(
+              0,
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 3),
+            ),
           ),
         ],
       ),
-      padding: const EdgeInsets.all(18),
+      padding: EdgeInsets.all(
+        AdaptiveLayout.getResponsiveFontSize(context, fontSize: 18),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, color: AppColors.primaryColor, size: 18),
-              const SizedBox(width: 8),
+              Icon(
+                icon,
+                color: AppColors.primaryColor,
+                size: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 18,
+                ),
+              ),
+              SizedBox(
+                width: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 8,
+                ),
+              ),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
-                  fontSize: 14,
+                  fontSize: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 14,
+                  ),
                 ),
               ),
             ],
           ),
-          const Divider(height: 20),
+          Divider(
+            height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 20),
+          ),
           ...children,
         ],
       ),

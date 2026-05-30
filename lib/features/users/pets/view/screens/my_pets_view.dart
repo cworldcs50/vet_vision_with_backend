@@ -50,7 +50,12 @@ class MyPetsView extends GetView<MyPetsController> {
           color: AppColors.primaryColor,
           onRefresh: controller.fetchPets,
           child: ListView.builder(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 100),
+            padding: EdgeInsets.fromLTRB(
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 16),
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 100),
+            ),
             itemCount: controller.pets.length,
             itemBuilder: (_, i) =>
                 _PetCard(pet: controller.pets[i], controller: controller),
@@ -222,25 +227,27 @@ class _PetCard extends StatelessWidget {
             ),
             child: hasImage
                 ? Image.network(
-                  pet.imageUrl!,
-                  width: AdaptiveLayout.getResponsiveFontSize(
-                    context,
-                    fontSize: 90,
-                  ),
-                  height: AdaptiveLayout.getResponsiveFontSize(
-                    context,
-                    fontSize: 90,
-                  ),
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    log(error.toString());
-                    return _defaultAvatar(context);
-                  },
-                )
-            : _defaultAvatar(context),
+                    pet.imageUrl!,
+                    width: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 90,
+                    ),
+                    height: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 90,
+                    ),
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      log(error.toString());
+                      return _defaultAvatar(context);
+                    },
+                  )
+                : _defaultAvatar(context),
           ),
 
-          const SizedBox(width: 14),
+          SizedBox(
+            width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 14),
+          ),
 
           // Info
           Expanded(
@@ -415,7 +422,16 @@ class _PetCard extends StatelessWidget {
         SizedBox(
           width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 3),
         ),
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: AdaptiveLayout.getResponsiveFontSize(
+              context,
+              fontSize: 12,
+            ),
+            color: Colors.grey[600],
+          ),
+        ),
       ],
     );
   }

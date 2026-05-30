@@ -141,8 +141,14 @@ class CustomSearchBar extends StatelessWidget {
                     children: [
                       Center(
                         child: Container(
-                          width: 50,
-                          height: 5,
+                          width: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 50,
+                          ),
+                          height: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 5,
+                          ),
                           margin: EdgeInsets.only(
                             bottom: AdaptiveLayout.getResponsiveFontSize(
                               sheetContext,
@@ -379,9 +385,20 @@ class CustomSearchBar extends StatelessWidget {
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.accent,
-                          minimumSize: const Size(double.infinity, 60),
+                          minimumSize: Size(
+                            double.infinity,
+                            AdaptiveLayout.getResponsiveFontSize(
+                              context,
+                              fontSize: 60,
+                            ),
+                          ),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
+                            borderRadius: BorderRadius.circular(
+                              AdaptiveLayout.getResponsiveFontSize(
+                                context,
+                                fontSize: 15,
+                              ),
+                            ),
                           ),
                           elevation: 0,
                         ),

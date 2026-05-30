@@ -17,9 +17,18 @@ class CustomElevatedButton extends StatelessWidget {
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         alignment: Alignment.center,
-        fixedSize: Size(AdaptiveLayout.getResponsiveFontSize(context, fontSize: 200), AdaptiveLayout.getResponsiveFontSize(context, fontSize: 40)),
-        minimumSize: Size(AdaptiveLayout.getResponsiveFontSize(context, fontSize: 50), AdaptiveLayout.getResponsiveFontSize(context, fontSize: 30)),
-        maximumSize: Size(AdaptiveLayout.getResponsiveFontSize(context, fontSize: 200), AdaptiveLayout.getResponsiveFontSize(context, fontSize: 40)),
+        fixedSize: Size(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 200),
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 40),
+        ),
+        minimumSize: Size(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 50),
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 30),
+        ),
+        maximumSize: Size(
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 200),
+          AdaptiveLayout.getResponsiveFontSize(context, fontSize: 40),
+        ),
         foregroundColor: const Color(0XFFFFFFFF),
         backgroundColor: const Color(0XFF00BBA7),
       ),

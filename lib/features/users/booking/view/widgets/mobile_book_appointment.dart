@@ -250,7 +250,7 @@ class MobileBookAppointment extends GetView<BookAppointmentController> {
           const Text("No available dates found.")
         else
           SizedBox(
-            height: 80,
+            height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 80),
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: ctrl.availableDays.length,
@@ -285,16 +285,32 @@ class MobileBookAppointment extends GetView<BookAppointmentController> {
                   onTap: () => ctrl.onDateSelected(dateStr),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
-                    margin: const EdgeInsets.only(right: 12),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
+                    margin: EdgeInsets.only(
+                      right: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 12,
+                      ),
+                    ),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 16,
+                      ),
+                      vertical: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 8,
+                      ),
                     ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primaryColor
                           : Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(
+                        AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 12,
+                        ),
+                      ),
                       border: Border.all(
                         color: isSelected
                             ? AppColors.primaryColor
@@ -317,7 +333,12 @@ class MobileBookAppointment extends GetView<BookAppointmentController> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        SizedBox(
+                          height: AdaptiveLayout.getResponsiveFontSize(
+                            context,
+                            fontSize: 4,
+                          ),
+                        ),
                         Text(
                           dateStr.split('-').last,
                           style: TextStyle(

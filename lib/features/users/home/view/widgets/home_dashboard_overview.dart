@@ -25,7 +25,13 @@ class HomeDashboardOverview extends StatelessWidget {
 
         if (controller.dashboardStatus == RequestStatus.loading) {
           return Padding(
-            padding: EdgeInsets.symmetric(horizontal: padding, vertical: 8),
+            padding: EdgeInsets.symmetric(
+              horizontal: padding,
+              vertical: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 8,
+              ),
+            ),
             child: Center(
               child: SizedBox(
                 height: AdaptiveLayout.getResponsiveFontSize(
@@ -36,7 +42,12 @@ class HomeDashboardOverview extends StatelessWidget {
                   context,
                   fontSize: 32,
                 ),
-                child: CircularProgressIndicator(strokeWidth: 2),
+                child: CircularProgressIndicator(
+                  strokeWidth: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 2,
+                  ),
+                ),
               ),
             ),
           );
@@ -114,4 +125,3 @@ class HomeDashboardOverview extends StatelessWidget {
     );
   }
 }
-

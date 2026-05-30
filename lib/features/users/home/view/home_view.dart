@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import '../../../../core/classes/adaptive_layout.dart';
 import 'widgets/custom_home_body.dart';
 import '../../messages/view/screens/messages_view.dart';
 import '../controller/home_controller.dart';
@@ -44,8 +45,8 @@ class _AiCenterFab extends StatelessWidget {
     return GestureDetector(
       onTap: () => Get.toNamed('/userChat'),
       child: Container(
-        width: 62,
-        height: 62,
+        width: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 62),
+        height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 62),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           gradient: const LinearGradient(
@@ -56,8 +57,14 @@ class _AiCenterFab extends StatelessWidget {
           boxShadow: [
             BoxShadow(
               color: AppColors.primary.withValues(alpha: 0.45),
-              blurRadius: 14,
-              offset: const Offset(0, 5),
+              blurRadius: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 14,
+              ),
+              offset: Offset(
+                0,
+                AdaptiveLayout.getResponsiveFontSize(context, fontSize: 5),
+              ),
             ),
           ],
         ),
@@ -69,32 +76,48 @@ class _AiCenterFab extends StatelessWidget {
               tween: Tween(begin: 0.8, end: 1.1),
               duration: const Duration(seconds: 2),
               curve: Curves.easeInOut,
-              builder: (_, v, child) => Transform.scale(
-                scale: v,
-                child: child,
-              ),
+              builder: (_, v, child) => Transform.scale(scale: v, child: child),
               onEnd: () {},
               child: Container(
-                width: 62,
-                height: 62,
+                width: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 62,
+                ),
+                height: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 62,
+                ),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
                     color: AppColors.primary.withValues(alpha: 0.3),
-                    width: 2,
+                    width: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 2,
+                    ),
                   ),
                 ),
               ),
             ),
-            const Column(
+            Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.auto_awesome, color: Colors.white, size: 22),
+                Icon(
+                  Icons.auto_awesome,
+                  color: Colors.white,
+                  size: AdaptiveLayout.getResponsiveFontSize(
+                    context,
+                    fontSize: 22,
+                  ),
+                ),
                 Text(
                   'فيتو',
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 9,
+                    fontSize: AdaptiveLayout.getResponsiveFontSize(
+                      context,
+                      fontSize: 9,
+                    ),
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
                   ),
@@ -116,11 +139,17 @@ class _CustomBottomNav extends StatelessWidget {
       builder: (controller) {
         return BottomAppBar(
           shape: const CircularNotchedRectangle(),
-          notchMargin: 8,
+          notchMargin: AdaptiveLayout.getResponsiveFontSize(
+            context,
+            fontSize: 8,
+          ),
           color: Colors.white,
-          elevation: 12,
+          elevation: AdaptiveLayout.getResponsiveFontSize(
+            context,
+            fontSize: 12,
+          ),
           child: SizedBox(
-            height: 60,
+            height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 60),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
@@ -192,20 +221,34 @@ class _NavItem extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: EdgeInsets.symmetric(
+          horizontal: AdaptiveLayout.getResponsiveFontSize(
+            context,
+            fontSize: 12,
+          ),
+          vertical: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 6),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
               isActive ? activeIcon : icon,
               color: isActive ? AppColors.primary : Colors.grey,
-              size: 24,
+              size: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 24),
             ),
-            const SizedBox(height: 2),
+            SizedBox(
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 2,
+              ),
+            ),
             Text(
               label,
               style: TextStyle(
-                fontSize: 10,
+                fontSize: AdaptiveLayout.getResponsiveFontSize(
+                  context,
+                  fontSize: 10,
+                ),
                 fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
                 color: isActive ? AppColors.primary : Colors.grey,
               ),

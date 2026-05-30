@@ -37,7 +37,10 @@ class BookingCard extends StatelessWidget {
               context,
               fontSize: 10,
             ),
-            offset: const Offset(0, 4),
+            offset: Offset(
+              0,
+              AdaptiveLayout.getResponsiveFontSize(context, fontSize: 4),
+            ),
             color: Colors.black.withValues(alpha: 0.05),
           ),
         ],

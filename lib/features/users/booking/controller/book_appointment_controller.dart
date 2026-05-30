@@ -1,13 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../model/doctor_model.dart';
+import 'package:flutter/material.dart';
 import '../../../../core/classes/crud.dart';
 import '../../../../core/constants/link_api.dart';
+import '../../../../core/services/app_service.dart';
 import '../../../../core/network/request_status.dart';
 import '../../../../core/routes/app_routes_name.dart';
-import '../../../../core/services/app_service.dart';
-import '../../../doctors/portal/appointments/data/datasource/appointment_datasource.dart';
 import '../../../doctors/portal/appointments/data/models/animal_model.dart';
-import '../model/doctor_model.dart';
+import '../../../doctors/portal/appointments/data/datasource/appointment_datasource.dart';
 
 class BookAppointmentController extends GetxController {
   // ── Tab state (About / Sessions / Reviews) ──────────────────────────────────
@@ -186,6 +186,7 @@ class BookAppointmentController extends GetxController {
             "price": sessionType == 'online'
                 ? (currentDoctor!.consultationFeeOnline ?? 0.0)
                 : (currentDoctor!.consultationFeeOffline ?? 0.0),
+            "doctorImage": currentDoctor!.imageUrl,
           },
         );
       } else {

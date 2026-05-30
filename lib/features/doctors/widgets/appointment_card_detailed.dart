@@ -12,20 +12,20 @@ class AppointmentCardDetailed extends StatelessWidget {
 
   // Helper: convert month number to abbreviated name
   String _monthName(int m) => const [
-        '',
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec',
-      ][m];
+    '',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ][m];
 
   @override
   Widget build(BuildContext context) {
@@ -141,8 +141,8 @@ class AppointmentCardDetailed extends StatelessWidget {
                   color: appointment.status == 'completed'
                       ? Colors.blue.withValues(alpha: 0.1)
                       : appointment.status == 'cancelled'
-                          ? Colors.red.withValues(alpha: 0.1)
-                          : const Color(0xFF009689).withValues(alpha: 0.1),
+                      ? Colors.red.withValues(alpha: 0.1)
+                      : const Color(0xFF009689).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(
                     AdaptiveLayout.getResponsiveFontSize(context, fontSize: 6),
                   ),
@@ -158,8 +158,8 @@ class AppointmentCardDetailed extends StatelessWidget {
                     color: appointment.status == 'completed'
                         ? Colors.blue
                         : appointment.status == 'cancelled'
-                            ? Colors.red
-                            : const Color(0xFF009689),
+                        ? Colors.red
+                        : const Color(0xFF009689),
                   ),
                 ),
               ),
@@ -267,26 +267,37 @@ class AppointmentCardDetailed extends StatelessWidget {
           // ── Action buttons (only for upcoming / pending appointments) ─────
           if (appointment.status == 'upcoming') ...[
             SizedBox(
-              height: AdaptiveLayout.getResponsiveFontSize(context, fontSize: 12),
+              height: AdaptiveLayout.getResponsiveFontSize(
+                context,
+                fontSize: 12,
+              ),
             ),
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () =>
-                        Get.find<DoctorPortalController>()
-                            .updateAppointmentStatus(
-                              appointment.id,
-                              'cancelled',
-                            ),
-                    icon: const Icon(Icons.close, color: Colors.red, size: 16),
+                    onPressed: () => Get.find<DoctorPortalController>()
+                        .updateAppointmentStatus(appointment.id, 'cancelled'),
+                    icon: Icon(
+                      Icons.close,
+                      color: Colors.red,
+                      size: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 16,
+                      ),
+                    ),
                     label: const Text(
                       "Cancel",
                       style: TextStyle(color: Colors.red),
                     ),
                     style: OutlinedButton.styleFrom(
                       side: const BorderSide(color: Colors.red),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        vertical: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 8,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -298,16 +309,15 @@ class AppointmentCardDetailed extends StatelessWidget {
                 ),
                 Expanded(
                   child: ElevatedButton.icon(
-                    onPressed: () =>
-                        Get.find<DoctorPortalController>()
-                            .updateAppointmentStatus(
-                              appointment.id,
-                              'completed',
-                            ),
-                    icon: const Icon(
+                    onPressed: () => Get.find<DoctorPortalController>()
+                        .updateAppointmentStatus(appointment.id, 'completed'),
+                    icon: Icon(
                       Icons.check,
                       color: Colors.white,
-                      size: 16,
+                      size: AdaptiveLayout.getResponsiveFontSize(
+                        context,
+                        fontSize: 16,
+                      ),
                     ),
                     label: const Text(
                       "Complete",
@@ -315,7 +325,12 @@ class AppointmentCardDetailed extends StatelessWidget {
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF009689),
-                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      padding: EdgeInsets.symmetric(
+                        vertical: AdaptiveLayout.getResponsiveFontSize(
+                          context,
+                          fontSize: 8,
+                        ),
+                      ),
                     ),
                   ),
                 ),

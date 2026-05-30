@@ -17,7 +17,7 @@ class ProfileView extends GetView<ProfileController> {
       backgroundColor: const Color(0xFFF9F9F9),
       appBar: AppBar(
         title: Text(
-          "Profile",
+          "Settings",
           style: TextStyle(
             color: Colors.black,
             fontSize: AdaptiveLayout.getResponsiveFontSize(
@@ -55,16 +55,49 @@ class ProfileView extends GetView<ProfileController> {
                                 context,
                                 fontSize: 40,
                               ),
-                              backgroundImage: NetworkImage(controller.avatarUrl),
+                              backgroundColor: AppColors.primaryColor
+                                  .withValues(alpha: 0.1),
+                              child: ClipOval(
+                                child: Image.network(
+                                  controller.avatarUrl,
+                                  fit: BoxFit.cover,
+                                  width:
+                                      AdaptiveLayout.getResponsiveFontSize(
+                                        context,
+                                        fontSize: 40,
+                                      ) *
+                                      2,
+                                  height:
+                                      AdaptiveLayout.getResponsiveFontSize(
+                                        context,
+                                        fontSize: 40,
+                                      ) *
+                                      2,
+                                  loadingBuilder: (context, child, progress) =>
+                                      progress == null
+                                      ? child
+                                      : const CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: AppColors.primaryColor,
+                                        ),
+                                  errorBuilder: (context, error, stack) => Icon(
+                                    Icons.person,
+                                    size: AdaptiveLayout.getResponsiveFontSize(
+                                      context,
+                                      fontSize: 40,
+                                    ),
+                                    color: AppColors.primaryColor,
+                                  ),
+                                ),
+                              ),
                             )
                           : CircleAvatar(
                               radius: AdaptiveLayout.getResponsiveFontSize(
                                 context,
                                 fontSize: 40,
                               ),
-                              backgroundColor: AppColors.primaryColor.withValues(
-                                alpha: 0.1,
-                              ),
+                              backgroundColor: AppColors.primaryColor
+                                  .withValues(alpha: 0.1),
                               child: Icon(
                                 Icons.person,
                                 color: AppColors.primaryColor,

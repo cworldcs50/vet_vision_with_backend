@@ -26,7 +26,8 @@ class PaymentController extends GetxController {
   void onInit() {
     super.onInit();
 
-    final args = Get.arguments as Map<String, dynamic>? ??
+    final args =
+        Get.arguments as Map<String, dynamic>? ??
         {
           "appointmentId": "",
           "doctorName": "Doctor",
@@ -86,9 +87,10 @@ class PaymentController extends GetxController {
         final paymentUrl = response.data['data']?['payment_url'];
         if (paymentUrl != null && paymentUrl.toString().isNotEmpty) {
           // Navigate to webview for online card payment
-          Get.toNamed('/paymentWebview', arguments: {
-            'paymentUrl': paymentUrl.toString(),
-          });
+          Get.toNamed(
+            '/paymentWebview',
+            arguments: {'paymentUrl': paymentUrl.toString()},
+          );
         } else {
           // Payment processed directly
           Get.snackbar(
